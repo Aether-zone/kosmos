@@ -1,0 +1,88 @@
+{
+    "color": {
+        "background": {
+            "$type": "color",
+            "$value": "{color.white}"
+        },
+        "foreground": {
+            "$type": "color",
+            "$value": "{color.gray.900}"
+        },
+        "surface": {
+            "$type": "color",
+            "$value": "{color.white}"
+        },
+        "surfaceForeground": {
+            "$type": "color",
+            "$value": "{color.gray.900}"
+        },
+        "primary": {
+            "$type": "color",
+            "$value": "{color.blue.600}"
+        },
+        "primaryForeground": {
+            "$type": "color",
+            "$value": "{color.white}"
+        },
+        "secondary": {
+            "$type": "color",
+            "$value": "{color.gray.100}"
+        },
+        "secondaryForeground": {
+            "$type": "color",
+            "$value": "{color.gray.900}"
+        },
+        "muted": {
+            "$type": "color",
+            "$value": "{color.gray.100}"
+        },
+        "mutedForeground": {
+            "$type": "color",
+            "$value": "{color.gray.500}"
+        },
+        "accent": {
+            "$type": "color",
+            "$value": "{color.gray.100}"
+        },
+        "accentForeground": {
+            "$type": "color",
+            "$value": "{color.gray.900}"
+        },
+        "border": {
+            "$type": "color",
+            "$value": "{color.gray.200}"
+        },
+        "input": {
+            "$type": "color",
+            "$value": "{color.gray.200}"
+        },
+        "ring": {
+            "$type": "color",
+            "$value": "{color.blue.600}"
+        },
+        "destructive": {
+            "$type": "color",
+            "$value": "{color.red.600}"
+        },
+        "destructiveForeground": {
+            "$type": "color",
+            "$value": "{color.white}"
+        },
+        "success": {
+            "$type": "color",
+            "$value": "{color.green.600}"
+        },
+        "successForeground": {
+            "$type": "color",
+            "$value": "{color.white}"
+        },
+        "warning": {
+            "$type": "color",
+            "$value": "{color.yellow.600}"
+        },
+        "warningForeground": {
+            "$type": "color",
+            "$value": "{color.gray.900}"
+        }
+    }
+}

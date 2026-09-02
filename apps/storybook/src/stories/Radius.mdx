@@ -1,0 +1,64 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design Tokens/Radius" />
+
+# Radius
+
+Kosmos provides a consistent border-radius scale for components and surfaces.
+
+## Scale
+
+<div
+  style={{
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    marginTop: '24px',
+  }}
+>
+  {[
+    ['none', '0rem'],
+    ['sm', '0.25rem'],
+    ['md', '0.375rem'],
+    ['lg', '0.5rem'],
+    ['xl', '0.75rem'],
+    ['2xl', '1rem'],
+    ['3xl', '1.5rem'],
+    ['full', '9999px'],
+  ].map(([token, value]) => (
+    <div
+      key={token}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '64px 1fr 90px',
+        alignItems: 'center',
+        gap: '16px',
+      }}
+    >
+      <code>{token}</code>
+
+      <div
+        style={{
+          width: '64px',
+          height: '40px',
+          border: '2px solid var(--kosmos-color-primary)',
+          borderRadius: value,
+        }}
+      />
+
+      <code>{value}</code>
+    </div>
+  ))}
+</div>
+
+## Usage
+
+Radius tokens map to Tailwind's border-radius utilities.
+
+```tsx
+<div className="rounded-md">
+  Content
+</div>
+```
+
+Use the radius scale consistently across components, cards, inputs, buttons, and other surfaces.

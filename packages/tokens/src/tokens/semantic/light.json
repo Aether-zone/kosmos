@@ -1,0 +1,49 @@
+{
+    "color": {
+        "background": {
+            "$value": "{color.white}"
+        },
+        "foreground": {
+            "$value": "{color.gray.900}"
+        },
+        "surface": {
+            "$value": "{color.white}"
+        },
+        "surfaceForeground": {
+            "$value": "{color.gray.900}"
+        },
+        "primary": {
+            "$value": "{color.blue.600}"
+        },
+        "primaryForeground": {
+            "$value": "{color.white}"
+        },
+        "secondary": {
+            "$value": "{color.gray.100}"
+        },
+        "secondaryForeground": {
+            "$value": "{color.gray.900}"
+        },
+        "muted": {
+            "$value": "{color.gray.100}"
+        },
+        "mutedForeground": {
+            "$value": "{color.gray.500}"
+        },
+        "border": {
+            "$value": "{color.gray.200}"
+        },
+        "input": {
+            "$value": "{color.gray.200}"
+        },
+        "ring": {
+            "$value": "{color.blue.600}"
+        },
+        "destructive": {
+            "$value": "{color.red.600}"
+        },
+        "destructiveForeground": {
+            "$value": "{color.white}"
+        }
+    }
+}

@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@import "@kosmos/tokens/tokens.css";
+
+/**
+ * The token -> Tailwind theme mapping lives in the library and ships with it,
+ * so Storybook consumes the exact same stylesheet published to consumers
+ * rather than keeping a second copy in sync by hand.
+ */
+@import "@aether-zone/kosmos/styles.css";
+
+@source "../../../packages/react/src";

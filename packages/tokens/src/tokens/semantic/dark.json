@@ -1,0 +1,67 @@
+{
+    "color": {
+        "background": {
+            "$value": "{color.gray.950}"
+        },
+        "foreground": {
+            "$value": "{color.gray.50}"
+        },
+        "surface": {
+            "$value": "{color.gray.900}"
+        },
+        "surfaceForeground": {
+            "$value": "{color.gray.50}"
+        },
+        "primary": {
+            "$value": "{color.blue.500}"
+        },
+        "primaryForeground": {
+            "$value": "{color.white}"
+        },
+        "secondary": {
+            "$value": "{color.gray.800}"
+        },
+        "secondaryForeground": {
+            "$value": "{color.gray.50}"
+        },
+        "muted": {
+            "$value": "{color.gray.800}"
+        },
+        "mutedForeground": {
+            "$value": "{color.gray.400}"
+        },
+        "border": {
+            "$value": "{color.gray.800}"
+        },
+        "input": {
+            "$value": "{color.gray.800}"
+        },
+        "ring": {
+            "$value": "{color.blue.500}"
+        },
+        "destructive": {
+            "$value": "{color.red.500}"
+        },
+        "destructiveForeground": {
+            "$value": "{color.white}"
+        },
+        "accent": {
+            "$value": "{color.gray.800}"
+        },
+        "accentForeground": {
+            "$value": "{color.gray.50}"
+        },
+        "success": {
+            "$value": "{color.green.500}"
+        },
+        "successForeground": {
+            "$value": "{color.white}"
+        },
+        "warning": {
+            "$value": "{color.yellow.500}"
+        },
+        "warningForeground": {
+            "$value": "{color.gray.950}"
+        }
+    }
+}

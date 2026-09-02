@@ -1,0 +1,115 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design Tokens/Spacing" />
+
+# Spacing
+
+Kosmos uses a consistent spacing scale based on `rem`.
+
+## Scale
+
+## Scale
+
+<table style={{ width: '100%', borderCollapse: 'collapse' }}>
+  <thead>
+    <tr>
+      <th style={{ textAlign: 'left', padding: '8px 12px' }}>Token</th>
+      <th style={{ textAlign: 'left', padding: '8px 12px' }}>Value</th>
+      <th style={{ textAlign: 'left', padding: '8px 12px' }}>Pixels</th>
+    </tr>
+  </thead>
+  <tbody>
+    {[
+      ['0', '0rem', '0px'],
+      ['1', '0.25rem', '4px'],
+      ['2', '0.5rem', '8px'],
+      ['3', '0.75rem', '12px'],
+      ['4', '1rem', '16px'],
+      ['5', '1.25rem', '20px'],
+      ['6', '1.5rem', '24px'],
+      ['8', '2rem', '32px'],
+      ['10', '2.5rem', '40px'],
+      ['12', '3rem', '48px'],
+      ['16', '4rem', '64px'],
+      ['20', '5rem', '80px'],
+      ['24', '6rem', '96px'],
+      ['32', '8rem', '128px'],
+    ].map(([token, value, pixels]) => (
+      <tr key={token}>
+        <td style={{ padding: '8px 12px' }}>
+          <code>{token}</code>
+        </td>
+        <td style={{ padding: '8px 12px' }}>
+          <code>{value}</code>
+        </td>
+        <td style={{ padding: '8px 12px', opacity: 0.7 }}>
+          <code>{pixels}</code>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+## Visual scale
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+  {[
+    ['0', '0rem'],
+    ['1', '0.25rem'],
+    ['2', '0.5rem'],
+    ['3', '0.75rem'],
+    ['4', '1rem'],
+    ['5', '1.25rem'],
+    ['6', '1.5rem'],
+    ['8', '2rem'],
+    ['10', '2.5rem'],
+    ['12', '3rem'],
+    ['16', '4rem'],
+    ['20', '5rem'],
+    ['24', '6rem'],
+    ['32', '8rem'],
+  ].map(([token, value]) => (
+    <div
+      key={token}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+      }}
+    >
+      <code style={{ width: '40px' }}>{token}</code>
+
+      <div
+        style={{
+          width: value,
+          minWidth: '1px',
+          height: '24px',
+          background: 'var(--kosmos-color-primary)',
+        }}
+      />
+
+      <code>{value}</code>
+    </div>
+  ))}
+</div>
+
+## Usage
+
+Spacing tokens map directly to the Tailwind spacing scale.
+
+```tsx
+<div className="p-4">
+  <div className="mb-6">
+    Content
+  </div>
+</div>
+```
+
+Use the spacing scale consistently for:
+
+- Padding
+- Margins
+- Gaps
+- Layout spacing
+- Component internals
+- Section spacing

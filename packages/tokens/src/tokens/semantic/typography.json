@@ -1,0 +1,76 @@
+{
+    "font": {
+        "family": {
+            "sans": {
+                "$value": "{fontFamily.sans}",
+                "$type": "fontFamily"
+            },
+            "mono": {
+                "$value": "{fontFamily.mono}",
+                "$type": "fontFamily"
+            }
+        },
+        "size": {
+            "body": {
+                "$value": "{fontSize.md}",
+                "$type": "dimension"
+            },
+            "bodySmall": {
+                "$value": "{fontSize.sm}",
+                "$type": "dimension"
+            },
+            "label": {
+                "$value": "{fontSize.sm}",
+                "$type": "dimension"
+            },
+            "headingSmall": {
+                "$value": "{fontSize.lg}",
+                "$type": "dimension"
+            },
+            "heading": {
+                "$value": "{fontSize.xl}",
+                "$type": "dimension"
+            },
+            "headingLarge": {
+                "$value": "{fontSize.2xl}",
+                "$type": "dimension"
+            },
+            "display": {
+                "$value": "{fontSize.4xl}",
+                "$type": "dimension"
+            }
+        },
+        "weight": {
+            "normal": {
+                "$value": "{fontWeight.normal}",
+                "$type": "fontWeight"
+            },
+            "medium": {
+                "$value": "{fontWeight.medium}",
+                "$type": "fontWeight"
+            },
+            "semibold": {
+                "$value": "{fontWeight.semibold}",
+                "$type": "fontWeight"
+            },
+            "bold": {
+                "$value": "{fontWeight.bold}",
+                "$type": "fontWeight"
+            }
+        },
+        "lineHeight": {
+            "tight": {
+                "$value": "{lineHeight.tight}",
+                "$type": "number"
+            },
+            "normal": {
+                "$value": "{lineHeight.normal}",
+                "$type": "number"
+            },
+            "relaxed": {
+                "$value": "{lineHeight.relaxed}",
+                "$type": "number"
+            }
+        }
+    }
+}
