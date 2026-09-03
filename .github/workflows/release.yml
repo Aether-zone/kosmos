@@ -50,8 +50,11 @@ jobs:
       - name: Version or publish
         uses: changesets/action@v1
         with:
-          version: pnpm version
-          publish: pnpm release
+          # `run` is not optional: `pnpm version` is a built-in command that
+          # prints version info and exits, so the script never ran and the
+          # action pushed a branch with nothing on it.
+          version: pnpm run version
+          publish: pnpm run release
           commit: 'Version packages'
           title: 'Version packages'
         env:
