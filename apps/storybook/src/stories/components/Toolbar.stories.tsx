@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { IoLinkOutline, IoListOutline, IoTextOutline } from 'react-icons/io5';
 
 import {
     Toolbar,
@@ -16,58 +17,18 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const BoldIcon = () => (
-    <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        className="size-4"
-    >
-        <path d="M6 4h8a4 4 0 0 1 0 8H6z" />
-        <path d="M6 12h9a4 4 0 0 1 0 8H6z" />
-    </svg>
-);
-
-const ItalicIcon = () => (
-    <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        className="size-4"
-    >
-        <path d="M10 4h8" />
-        <path d="M6 20h8" />
-        <path d="M14 4 10 20" />
-    </svg>
-);
-
-const LinkIcon = () => (
-    <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        className="size-4"
-    >
-        <path d="M10 13a5 5 0 0 0 7.07.07l2-2a5 5 0 0 0-7.07-7.07l-1.15 1.15" />
-        <path d="M14 11a5 5 0 0 0-7.07-.07l-2 2A5 5 0 0 0 7 20l1.15-1.15" />
-    </svg>
-);
-
 export const Default: Story = {
     render: () => (
         <Toolbar>
-            <ToolbarButton icon={<BoldIcon />}>
-                Bold
+            <ToolbarButton icon={<IoTextOutline />}>
+                Text
             </ToolbarButton>
 
-            <ToolbarButton icon={<ItalicIcon />}>
-                Italic
+            <ToolbarButton icon={<IoListOutline />}>
+                List
             </ToolbarButton>
 
-            <ToolbarButton icon={<LinkIcon />}>
+            <ToolbarButton icon={<IoLinkOutline />}>
                 Link
             </ToolbarButton>
         </Toolbar>
@@ -78,17 +39,17 @@ export const Groups: Story = {
     render: () => (
         <Toolbar>
             <ToolbarGroup>
-                <ToolbarButton icon={<BoldIcon />}>
-                    Bold
+                <ToolbarButton icon={<IoTextOutline />}>
+                    Text
                 </ToolbarButton>
 
-                <ToolbarButton icon={<ItalicIcon />}>
-                    Italic
+                <ToolbarButton icon={<IoListOutline />}>
+                    List
                 </ToolbarButton>
             </ToolbarGroup>
 
             <ToolbarGroup>
-                <ToolbarButton icon={<LinkIcon />}>
+                <ToolbarButton icon={<IoLinkOutline />}>
                     Link
                 </ToolbarButton>
             </ToolbarGroup>
@@ -100,17 +61,17 @@ export const IconOnly: Story = {
     render: () => (
         <Toolbar>
             <ToolbarButton
-                icon={<BoldIcon />}
-                aria-label="Bold"
+                icon={<IoTextOutline />}
+                aria-label="Text"
             />
 
             <ToolbarButton
-                icon={<ItalicIcon />}
-                aria-label="Italic"
+                icon={<IoListOutline />}
+                aria-label="List"
             />
 
             <ToolbarButton
-                icon={<LinkIcon />}
+                icon={<IoLinkOutline />}
                 aria-label="Insert link"
             />
         </Toolbar>
@@ -120,18 +81,18 @@ export const IconOnly: Story = {
 export const Disabled: Story = {
     render: () => (
         <Toolbar>
-            <ToolbarButton icon={<BoldIcon />}>
-                Bold
+            <ToolbarButton icon={<IoTextOutline />}>
+                Text
             </ToolbarButton>
 
             <ToolbarButton
-                icon={<ItalicIcon />}
+                icon={<IoListOutline />}
                 disabled
             >
-                Italic
+                List
             </ToolbarButton>
 
-            <ToolbarButton icon={<LinkIcon />}>
+            <ToolbarButton icon={<IoLinkOutline />}>
                 Link
             </ToolbarButton>
         </Toolbar>
@@ -142,17 +103,17 @@ export const Vertical: Story = {
     render: () => (
         <Toolbar orientation="vertical">
             <ToolbarButton
-                icon={<BoldIcon />}
-                aria-label="Bold"
+                icon={<IoTextOutline />}
+                aria-label="Text"
             />
 
             <ToolbarButton
-                icon={<ItalicIcon />}
-                aria-label="Italic"
+                icon={<IoListOutline />}
+                aria-label="List"
             />
 
             <ToolbarButton
-                icon={<LinkIcon />}
+                icon={<IoLinkOutline />}
                 aria-label="Insert link"
             />
         </Toolbar>
@@ -164,17 +125,17 @@ export const Editor: Story = {
         <div className="w-full max-w-2xl space-y-4">
             <Toolbar>
                 <ToolbarGroup>
-                    <ToolbarButton icon={<BoldIcon />}>
+                    <ToolbarButton icon={<IoTextOutline />}>
                         Bold
                     </ToolbarButton>
 
-                    <ToolbarButton icon={<ItalicIcon />}>
+                    <ToolbarButton icon={<IoListOutline />}>
                         Italic
                     </ToolbarButton>
                 </ToolbarGroup>
 
                 <ToolbarGroup>
-                    <ToolbarButton icon={<LinkIcon />}>
+                    <ToolbarButton icon={<IoLinkOutline />}>
                         Link
                     </ToolbarButton>
                 </ToolbarGroup>

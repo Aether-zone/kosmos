@@ -7,6 +7,8 @@ import {
     useState,
 } from 'react';
 
+import { IoCloudUploadOutline, IoClose } from 'react-icons/io5';
+
 export interface FileUploadProps
     extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'onDrop'> {
     accept?: string;
@@ -181,9 +183,10 @@ export function FileUpload({
                 onDragLeave={() => setDragging(false)}
                 onDrop={handleDrop}
             >
-                <span aria-hidden="true" className="text-2xl text-muted-foreground">
-                    ⬆
-                </span>
+                <IoCloudUploadOutline
+                    aria-hidden="true"
+                    className="size-7 text-muted-foreground"
+                />
 
                 <span className="text-sm font-medium text-foreground">
                     {label}
@@ -236,7 +239,7 @@ export function FileUpload({
                                 className="shrink-0 cursor-pointer rounded-sm px-1 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                                 onClick={() => remove(index)}
                             >
-                                ×
+                                <IoClose className="size-4" />
                             </button>
                         </li>
                     ))}

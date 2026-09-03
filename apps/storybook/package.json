@@ -12,7 +12,8 @@
     "@aether-zone/kosmos": "workspace:*",
     "@kosmos/tokens": "workspace:*",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-icons": "^5.7.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "latest",

@@ -1,5 +1,11 @@
 import type { HTMLAttributes } from 'react';
 
+import {
+    IoChevronBack,
+    IoChevronForward,
+    IoEllipsisHorizontal,
+} from 'react-icons/io5';
+
 export interface PaginationProps
     extends Omit<HTMLAttributes<HTMLElement>, 'onChange'> {
     page: number;
@@ -91,7 +97,7 @@ export function Pagination({
                         ].join(' ')}
                         onClick={() => go(page - 1)}
                     >
-                        ‹
+                        <IoChevronBack className="size-4" />
                     </button>
                 </li>
 
@@ -100,9 +106,9 @@ export function Pagination({
                         <li
                             key={`ellipsis-${index}`}
                             aria-hidden="true"
-                            className="px-1 text-sm text-muted-foreground"
+                            className="flex items-center px-1 text-muted-foreground"
                         >
-                            …
+                            <IoEllipsisHorizontal className="size-4" />
                         </li>
                     ) : (
                         <li key={item}>
@@ -136,7 +142,7 @@ export function Pagination({
                         ].join(' ')}
                         onClick={() => go(page + 1)}
                     >
-                        ›
+                        <IoChevronForward className="size-4" />
                     </button>
                 </li>
             </ul>

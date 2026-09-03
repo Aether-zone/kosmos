@@ -7,6 +7,8 @@ import {
     type ReactNode,
 } from 'react';
 
+import { IoClose } from 'react-icons/io5';
+
 export type ToastVariant =
     | 'default'
     | 'success'
@@ -184,7 +186,7 @@ function ToastItem({ toast }: ToastItemProps) {
                 className="shrink-0 cursor-pointer rounded-sm p-1 text-current opacity-60 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => dismiss(toast.id)}
             >
-                ×
+                <IoClose className="size-4" />
             </button>
         </div>
     );

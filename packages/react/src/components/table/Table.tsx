@@ -5,6 +5,8 @@ import type {
     TdHTMLAttributes,
 } from 'react';
 
+import { IoArrowDown, IoArrowUp, IoSwapVertical } from 'react-icons/io5';
+
 export type SortDirection = 'ascending' | 'descending';
 
 export interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
@@ -133,7 +135,11 @@ export function TableRow({
     );
 }
 
-const sortIndicator = { ascending: '↑', descending: '↓', none: '↕' };
+const SortIcon = {
+    ascending: IoArrowUp,
+    descending: IoArrowDown,
+    none: IoSwapVertical,
+};
 
 export function TableHead({
     sort,
@@ -150,6 +156,8 @@ export function TableHead({
         .filter(Boolean)
         .join(' ');
 
+    const Icon = sort ? SortIcon[sort] : null;
+
     return (
         <th
             scope="col"
@@ -158,20 +166,18 @@ export function TableHead({
             className={classes}
             {...props}
         >
-            {sort === undefined ? (
-                children
-            ) : (
+            {Icon ? (
                 <button
                     type="button"
-                    className="-mx-1 inline-flex cursor-pointer items-center gap-1 rounded-sm px-1 outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                    className="-mx-1 inline-flex cursor-pointer items-center gap-1.5 rounded-sm px-1 outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
                     onClick={onSortChange}
                 >
                     {children}
 
-                    <span aria-hidden="true" className="text-xs">
-                        {sortIndicator[sort]}
-                    </span>
+                    <Icon aria-hidden="true" className="size-3.5" />
                 </button>
+            ) : (
+                children
             )}
         </th>
     );

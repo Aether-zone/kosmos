@@ -12,6 +12,8 @@ import {
     useState,
 } from 'react';
 
+import { IoChevronDown } from 'react-icons/io5';
+
 import { OverlayPanel, useDismiss, type OverlayAlign } from '../../internal';
 
 export type DropdownAlign = 'start' | 'end';
@@ -159,9 +161,7 @@ export function DropdownTrigger({
         >
             {children}
 
-            <span aria-hidden="true" className="text-xs leading-none">
-                ▾
-            </span>
+            <IoChevronDown aria-hidden="true" className="size-3.5 shrink-0" />
         </button>
     );
 }

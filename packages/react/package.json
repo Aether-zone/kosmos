@@ -27,7 +27,8 @@
         "react-dom": "^19.0.0"
     },
     "dependencies": {
-        "@kosmos/tokens": "workspace:*"
+        "@kosmos/tokens": "workspace:*",
+        "react-icons": "^5.7.0"
     },
     "devDependencies": {
         "@types/react": "^19.0.0",

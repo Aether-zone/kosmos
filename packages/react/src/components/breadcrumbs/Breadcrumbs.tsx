@@ -7,6 +7,8 @@ import {
     isValidElement,
 } from 'react';
 
+import { IoChevronForward, IoEllipsisHorizontal } from 'react-icons/io5';
+
 export interface BreadcrumbsProps extends HTMLAttributes<HTMLElement> {
     separator?: ReactNode;
     label?: string;
@@ -29,7 +31,7 @@ const linkStyles =
 const currentStyles = 'text-sm font-medium text-foreground';
 
 export function Breadcrumbs({
-    separator = '/',
+    separator = <IoChevronForward className="size-3.5" />,
     label = 'Breadcrumb',
     className,
     children,
@@ -49,7 +51,7 @@ export function Breadcrumbs({
                         {index < items.length - 1 ? (
                             <li
                                 aria-hidden="true"
-                                className="select-none text-sm text-muted-foreground"
+                                className="flex select-none items-center text-sm text-muted-foreground"
                             >
                                 {separator}
                             </li>
@@ -102,7 +104,7 @@ export function BreadcrumbEllipsis({
             className={classes}
             {...props}
         >
-            …
+            <IoEllipsisHorizontal className="size-4" />
         </span>
     );
 }

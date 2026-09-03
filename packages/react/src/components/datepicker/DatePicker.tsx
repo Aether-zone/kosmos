@@ -8,6 +8,8 @@ import {
     useState,
 } from 'react';
 
+import { IoCalendarOutline, IoChevronBack, IoChevronForward } from 'react-icons/io5';
+
 import { OverlayPanel, useDismiss } from '../../internal';
 
 export type DatePickerSize = 'sm' | 'md' | 'lg';
@@ -202,9 +204,10 @@ export function DatePicker({
                     {selected ? formatter.format(selected) : placeholder}
                 </span>
 
-                <span aria-hidden="true" className="text-muted-foreground">
-                    ▦
-                </span>
+                <IoCalendarOutline
+                    aria-hidden="true"
+                    className="size-4 shrink-0 text-muted-foreground"
+                />
             </button>
 
             <OverlayPanel
@@ -223,7 +226,7 @@ export function DatePicker({
                         label="Previous month"
                         onClick={() => setMonth(addMonths(month, -1))}
                     >
-                        ‹
+                        <IoChevronBack className="size-4" />
                     </CalendarNavButton>
 
                     <div
@@ -237,7 +240,7 @@ export function DatePicker({
                         label="Next month"
                         onClick={() => setMonth(addMonths(month, 1))}
                     >
-                        ›
+                        <IoChevronForward className="size-4" />
                     </CalendarNavButton>
                 </div>
 

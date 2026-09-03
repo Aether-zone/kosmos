@@ -1,4 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import {
+    IoFolderOutline,
+    IoHomeOutline,
+    IoSettingsOutline,
+} from 'react-icons/io5';
 
 import {
     Sidenav,
@@ -20,42 +25,6 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const HomeIcon = () => (
-    <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-    >
-        <path d="m3 10 9-7 9 7" />
-        <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9" />
-        <path d="M9 20v-6h6v6" />
-    </svg>
-);
-
-const FolderIcon = () => (
-    <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-    >
-        <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
-    </svg>
-);
-
-const SettingsIcon = () => (
-    <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-    >
-        <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
-        <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5v.1h-2.6v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H6v-2.6h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L9 6.6l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5v-.1h2.6v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1v2.6h-.1a1.7 1.7 0 0 0-1.5 1Z" />
-    </svg>
-);
-
 export const Default: Story = {
     render: () => (
         <div className="h-96">
@@ -75,14 +44,14 @@ export const Default: Story = {
                         <SidenavItem
                             href="#"
                             active
-                            icon={<HomeIcon />}
+                            icon={<IoHomeOutline />}
                         >
                             Dashboard
                         </SidenavItem>
 
                         <SidenavItem
                             href="#"
-                            icon={<FolderIcon />}
+                            icon={<IoFolderOutline />}
                         >
                             Projects
                         </SidenavItem>
@@ -92,7 +61,7 @@ export const Default: Story = {
                 <SidenavFooter>
                     <SidenavItem
                         href="#"
-                        icon={<SettingsIcon />}
+                        icon={<IoSettingsOutline />}
                     >
                         Settings
                     </SidenavItem>
@@ -176,15 +145,15 @@ export const WithIcons: Story = {
                             Navigation
                         </SidenavGroupLabel>
 
-                        <SidenavItem href="#" active icon={<HomeIcon />}>
+                        <SidenavItem href="#" active icon={<IoHomeOutline />}>
                             Home
                         </SidenavItem>
 
-                        <SidenavItem href="#" icon={<FolderIcon />}>
+                        <SidenavItem href="#" icon={<IoFolderOutline />}>
                             Files
                         </SidenavItem>
 
-                        <SidenavItem href="#" icon={<SettingsIcon />}>
+                        <SidenavItem href="#" icon={<IoSettingsOutline />}>
                             Settings
                         </SidenavItem>
                     </SidenavGroup>

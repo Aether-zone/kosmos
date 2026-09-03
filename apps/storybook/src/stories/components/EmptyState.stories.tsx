@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { IoFolderOpenOutline, IoSearchOutline } from 'react-icons/io5';
+
 import { Button, EmptyState } from '@aether-zone/kosmos';
 
 const meta = {
@@ -50,7 +52,7 @@ export const WithAction: Story = {
 
 export const WithIcon: Story = {
     args: {
-        icon: <span className="text-lg">📁</span>,
+        icon: <IoFolderOpenOutline className="size-5" />,
         description:
             'Projects you create will appear here. Start by adding your first one.',
         action: <Button>Create project</Button>,
@@ -59,7 +61,7 @@ export const WithIcon: Story = {
 
 export const Bordered: Story = {
     args: {
-        icon: <span className="text-lg">📁</span>,
+        icon: <IoFolderOpenOutline className="size-5" />,
         description: 'Nothing here yet.',
         action: <Button variant="outline">Create project</Button>,
         bordered: true,
@@ -69,7 +71,7 @@ export const Bordered: Story = {
 export const Small: Story = {
     args: {
         size: 'sm',
-        icon: <span>📁</span>,
+        icon: <IoFolderOpenOutline className="size-4" />,
         description: 'Nothing here yet.',
         bordered: true,
     },
@@ -78,7 +80,7 @@ export const Small: Story = {
 export const Large: Story = {
     args: {
         size: 'lg',
-        icon: <span className="text-xl">📁</span>,
+        icon: <IoFolderOpenOutline className="size-6" />,
         description: 'Nothing here yet.',
         action: <Button>Create project</Button>,
         bordered: true,
@@ -87,7 +89,7 @@ export const Large: Story = {
 
 export const SearchResults: Story = {
     args: {
-        icon: <span className="text-lg">🔍</span>,
+        icon: <IoSearchOutline className="size-5" />,
         title: 'No results found',
         description: 'Try a different search term or clear your filters.',
         action: <Button variant="ghost">Clear filters</Button>,

@@ -9,6 +9,8 @@ import {
     useState,
 } from 'react';
 
+import { IoChevronDown } from 'react-icons/io5';
+
 export interface AccordionProps
     extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
     /** `single` closes the open item when another opens. */
@@ -222,17 +224,15 @@ export function AccordionTrigger({
             >
                 {children}
 
-                <span
+                <IoChevronDown
                     aria-hidden="true"
                     className={[
-                        'shrink-0 text-xs text-muted-foreground transition-transform',
+                        'size-4 shrink-0 text-muted-foreground transition-transform',
                         isOpen ? 'rotate-180' : '',
                     ]
                         .filter(Boolean)
                         .join(' ')}
-                >
-                    ▾
-                </span>
+                />
             </button>
         </h3>
     );

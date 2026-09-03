@@ -10,6 +10,8 @@ pnpm add @aether-zone/kosmos
 ```
 
 `react` and `react-dom` are peer dependencies and stay external to the bundle.
+[`react-icons`](https://react-icons.github.io/react-icons/icons/io5/) is a
+regular dependency, installed for you.
 
 ## Usage
 
@@ -93,6 +95,17 @@ of refs for exactly that reason.
 Modal surfaces additionally use `useFocusTrap` and `useScrollLock`.
 `aria-modal="true"` asserts the rest of the page is inert, and those two
 hooks are what make the assertion true.
+
+## Icons
+
+Icons come from the Ionicons 5 set via `react-icons/io5`, always imported from
+that subpath so bundlers can tree-shake — never from the `react-icons` root.
+They are sized with Tailwind (`size-4`) and inherit `currentColor`, so an icon
+picks up the colour of whatever it sits in without any variant plumbing.
+`react-icons` stays external to the bundle.
+
+Ionicons 5 has no text-formatting glyphs (no bold or italic), which is worth
+knowing before designing a rich-text toolbar against it.
 
 Use `*-foreground` tokens only on their matching **solid** fill —
 `text-success-foreground` is white, so it disappears on a `bg-success/10`
