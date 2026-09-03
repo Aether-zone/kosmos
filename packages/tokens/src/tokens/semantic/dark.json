@@ -13,7 +13,7 @@
             "$value": "{color.gray.50}"
         },
         "primary": {
-            "$value": "{color.blue.500}"
+            "$value": "{color.blue.600}"
         },
         "primaryForeground": {
             "$value": "{color.white}"
@@ -37,10 +37,10 @@
             "$value": "{color.gray.800}"
         },
         "ring": {
-            "$value": "{color.blue.500}"
+            "$value": "{color.blue.600}"
         },
         "destructive": {
-            "$value": "{color.red.500}"
+            "$value": "{color.red.600}"
         },
         "destructiveForeground": {
             "$value": "{color.white}"
@@ -65,6 +65,9 @@
         },
         "warningEmphasis": {
             "$value": "{color.yellow.400}"
+        },
+        "destructiveEmphasis": {
+            "$value": "{color.red.400}"
         }
     }
 }

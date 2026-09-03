@@ -42,7 +42,7 @@ jobs:
 
       # The story tests render every story in a real browser.
       - name: Install Playwright Chromium
-        run: pnpm --filter storybook exec playwright install --with-deps chromium
+        run: pnpm --filter @kosmos/storybook exec playwright install --with-deps chromium
 
       - name: Test
         run: pnpm test

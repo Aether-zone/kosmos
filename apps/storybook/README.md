@@ -7,7 +7,7 @@ source of truth for visual regression tests.
 
 ```bash
 pnpm build                          # from the repo root, first
-pnpm --filter storybook storybook   # http://localhost:6006
+pnpm --filter @kosmos/storybook storybook   # http://localhost:6006
 ```
 
 The root build is a prerequisite, not a nicety. `src/styles.css` imports
@@ -55,8 +55,8 @@ Stories double as tests through `@storybook/addon-vitest`: every story is
 rendered in headless Chromium.
 
 ```bash
-pnpm --filter storybook exec vitest run
-pnpm --filter storybook exec vitest run src/stories/components/Button.stories.tsx
+pnpm --filter @kosmos/storybook exec vitest run
+pnpm --filter @kosmos/storybook exec vitest run src/stories/components/Button.stories.tsx
 ```
 
 The a11y addon runs in `'todo'` mode — violations surface in the test UI but

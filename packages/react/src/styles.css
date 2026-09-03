@@ -32,6 +32,8 @@
 
     --color-destructive: var(--kosmos-color-destructive);
     --color-destructive-foreground: var(--kosmos-color-destructive-foreground);
+    /* Readable as text on a surface, where --color-destructive is not. */
+    --color-destructive-emphasis: var(--kosmos-color-destructive-emphasis);
 
     --color-success: var(--kosmos-color-success);
     --color-success-foreground: var(--kosmos-color-success-foreground);

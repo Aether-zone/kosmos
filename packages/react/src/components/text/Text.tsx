@@ -46,7 +46,7 @@ export const toneStyles: Record<TextTone, string> = {
     success: 'text-success',
     // The fill colour is unreadable as text; this is its text-safe pair.
     warning: 'text-warning-emphasis',
-    destructive: 'text-destructive',
+    destructive: 'text-destructive-emphasis',
 };
 
 const alignStyles: Record<TextAlign, string> = {

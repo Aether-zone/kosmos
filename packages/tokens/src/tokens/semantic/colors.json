@@ -68,6 +68,10 @@
             "$type": "color",
             "$value": "{color.white}"
         },
+        "destructiveEmphasis": {
+            "$type": "color",
+            "$value": "{color.red.700}"
+        },
         "success": {
             "$type": "color",
             "$value": "{color.green.700}"

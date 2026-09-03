@@ -277,7 +277,7 @@ export function DropdownItem({
 
     const classes = [
         itemStyles,
-        destructive && 'text-destructive',
+        destructive && 'text-destructive-emphasis',
         className,
     ]
         .filter(Boolean)

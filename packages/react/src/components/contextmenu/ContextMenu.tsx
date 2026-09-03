@@ -246,7 +246,7 @@ export function ContextMenuItem({
 
     const classes = [
         itemStyles,
-        destructive ? 'text-destructive' : 'text-foreground',
+        destructive ? 'text-destructive-emphasis' : 'text-foreground',
         className,
     ]
         .filter(Boolean)

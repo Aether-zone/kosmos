@@ -28,7 +28,7 @@ const descriptionStyles =
     'text-sm text-muted-foreground';
 
 const errorStyles =
-    'text-sm font-medium text-destructive';
+    'text-sm font-medium text-destructive-emphasis';
 
 export function Form({
     className,

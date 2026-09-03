@@ -22,12 +22,12 @@ pnpm typecheck   # react only: tsc --noEmit — this is the reliable gate today
 pnpm lint        # BROKEN: react declares `eslint .` but eslint is not a dependency and no config exists
 pnpm test        # BROKEN: react declares `vitest run` but has no test files (vitest exits 1)
 
-pnpm --filter storybook storybook        # dev server on :6006
-pnpm --filter storybook build-storybook
-pnpm --filter storybook lint             # oxlint (the only lint that actually runs)
+pnpm --filter @kosmos/storybook storybook        # dev server on :6006
+pnpm --filter @kosmos/storybook build-storybook
+pnpm --filter @kosmos/storybook lint             # oxlint (the only lint that actually runs)
 ```
 
-Storybook now defines `test` and `typecheck`, so the root scripts reach it. Note it is still not part of root `build`/`dev`; and Storybook is *not* wired into the root scripts — it has no `build`/`dev`/`test`/`typecheck` script of its own. Component tests run through the Storybook Vitest addon (`apps/storybook/vite.config.ts`, headless Chromium via Playwright); run them with `pnpm --filter storybook exec vitest run`, and a single story file with `... vitest run src/stories/components/Button.stories.tsx`.
+Storybook now defines `test` and `typecheck`, so the root scripts reach it. Note it is still not part of root `build`/`dev`; and Storybook is *not* wired into the root scripts — it has no `build`/`dev`/`test`/`typecheck` script of its own. Component tests run through the Storybook Vitest addon (`apps/storybook/vite.config.ts`, headless Chromium via Playwright); run them with `pnpm --filter @kosmos/storybook exec vitest run`, and a single story file with `... vitest run src/stories/components/Button.stories.tsx`.
 
 Run `pnpm build` before starting Storybook: `apps/storybook/src/styles.css` imports both `@kosmos/tokens/tokens.css` and `@aether-zone/kosmos/styles.css` from `dist`, so a stale or missing build means unstyled stories.
 
@@ -64,7 +64,9 @@ Dark mode is applied by putting `.dark` (or `[data-theme="dark"]`) on any ancest
 - **`*-foreground` tokens are for their matching solid fill only.** `success-foreground` is white, so `text-success-foreground` on `bg-success/10` is invisible; tinted surfaces take `text-foreground`. This shipped in both Alert and Toast.
 - `react`/`react-dom` are peer deps of the library and marked external in `tsup.config.ts`; keep them out of the bundle.
 - The a11y addon runs at `test: 'error'`, so axe violations fail the run. A story that genuinely cannot satisfy a rule opts out on itself via `parameters.a11y.config.rules` with a reason — the two that do are disabled controls, which WCAG 1.4.3 exempts but axe measures anyway.
-- `warning` is tuned for solid fills (yellow-600 carries dark text at 6.1:1) and is unreadable as text at 2.9:1. Darkening it would drop the fill below 4.5:1, so yellow has two tokens: use `warning` for fills and `warning-emphasis` for text and meaningful graphics. No other role needs the split.
+- `warning` and `destructive` each have a text-safe pair. A fill colour is chosen so its own label is readable *on* it; the same colour used as text on a page surface is a different constraint, and for yellow and red the two pull apart. Use `warning`/`destructive` for fills and `warning-emphasis`/`destructive-emphasis` for text and meaningful graphics. `success` needs no split — green-700 clears both.
+- `packages/react/src/__tests__/contrast.test.ts` parses the built tokens and asserts every fill carries its foreground and every text colour is readable on every surface, in **both** themes. The a11y story tests only render light, which is how dark shipped with white on blue-500 at 3.7:1.
+- Releases go through Changesets: a change that should ship carries a changeset, and `release.yml` opens a *Version packages* PR whose merge publishes. A change with no changeset never ships — see ADR 9.
 - `packages/tokens/dist/tokens.css` emits `--kosmos-font-family-*` and `--kosmos-font-weight-*` twice, because `primitives/typography.json` (`fontFamily.sans`) and `semantic/typography.json` (`font.family.sans`) transform to the same variable name. The values are identical so nothing breaks, but it is the one collision the build still warns about.
 - CI is two workflows. `ci.yml` builds, then runs `pnpm typecheck`, `pnpm lint` and `pnpm test` (every story rendered in headless Chromium). `chromatic.yml` publishes Storybook for visual regression using the `CHROMATIC_KEY` secret. `publish.yml` releases to GitHub Packages on a published Release.
 - Lint runs `oxlint --deny-warnings` in both workspaces, so the tree is warning-free and must stay that way. `packages/react` has no unit tests of its own — its behaviour is covered by the stories — so its `test` script passes with none.

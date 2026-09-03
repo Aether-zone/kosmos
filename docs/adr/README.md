@@ -16,6 +16,7 @@ ADRs document significant architectural decisions, the context behind them, and 
 | [6](0006-storybook-as-workshop-and-test-runner.md) | Storybook as workshop, documentation and test runner | Accepted |
 | [7](0007-esm-only-distribution.md) | ESM-only distribution | Accepted |
 | [8](0008-chromatic-for-visual-regression.md) | Chromatic for visual regression testing | Accepted |
+| [9](0009-changesets-for-versioning-and-release.md) | Changesets for versioning and release | Accepted |
 
 ## Statuses
 

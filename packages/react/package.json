@@ -21,7 +21,7 @@
         "build": "tsup && node build-styles.mjs && tailwindcss -i src/tailwind.css -o dist/styles.css --minify",
         "dev": "tsup --watch",
         "lint": "oxlint --deny-warnings",
-        "test": "vitest run --passWithNoTests",
+        "test": "vitest run",
         "typecheck": "tsc --noEmit"
     },
     "peerDependencies": {

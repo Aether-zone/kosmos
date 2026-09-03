@@ -17,7 +17,7 @@ Tailwind utilities, and a Storybook that documents both.
 ```bash
 pnpm install
 pnpm build                                # tokens, then the component library
-pnpm --filter storybook storybook         # http://localhost:6006
+pnpm --filter @kosmos/storybook storybook         # http://localhost:6006
 ```
 
 `pnpm build` comes first: Storybook consumes `@kosmos/tokens/tokens.css` and
@@ -31,14 +31,14 @@ unstyled stories.
 | `pnpm build` | Builds tokens, then the library. Order follows the workspace dependency. |
 | `pnpm dev` | Rebuilds the library on change (`tsup --watch`). |
 | `pnpm typecheck` | `tsc --noEmit` across the workspace. |
-| `pnpm --filter storybook storybook` | Storybook dev server. |
-| `pnpm --filter storybook build-storybook` | Static Storybook build. |
-| `pnpm --filter storybook lint` | Lints the Storybook app with oxlint. |
+| `pnpm --filter @kosmos/storybook storybook` | Storybook dev server. |
+| `pnpm --filter @kosmos/storybook build-storybook` | Static Storybook build. |
+| `pnpm --filter @kosmos/storybook lint` | Lints the Storybook app with oxlint. |
 | `pnpm test` | Renders every story in headless Chromium, including the `play` functions that guard past regressions. |
 | `pnpm lint` | `oxlint --deny-warnings` across the workspace. |
 
 Run a single story file with
-`pnpm --filter storybook exec vitest run src/stories/components/Button.stories.tsx`.
+`pnpm --filter @kosmos/storybook exec vitest run src/stories/components/Button.stories.tsx`.
 
 CI runs exactly these: `.github/workflows/ci.yml` builds, typechecks, lints and
 tests on every push to `main` and every pull request.
