@@ -19,7 +19,7 @@ import {
     IoPlay,
 } from 'react-icons/io5';
 
-import { usePrefersReducedMotion } from '../../internal';
+import { usePrefersReducedMotion } from '../../hooks';
 
 export interface CarouselProps
     extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {

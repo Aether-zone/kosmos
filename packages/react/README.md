@@ -102,6 +102,40 @@ Content
 
 Every component and its props are documented in Storybook.
 
+## Hooks
+
+The library exports the hooks its own components are built on.
+
+| Hook | For |
+| --- | --- |
+| `useMediaQuery(query)` | Any media query, read during render |
+| `useBreakpoint(name)` / `useIsMobile()` | Tailwind's breakpoints, in JavaScript |
+| `usePrefersReducedMotion()` | Motion a media query cannot switch off |
+| `useTheme(options)` | Reading and setting light/dark/system |
+| `useDisclosure(defaultOpen)` | Open/close state for an overlay |
+| `useControllableState(options)` | Building your own controlled/uncontrolled component |
+| `useCopyToClipboard(resetAfter)` | A copy button, with its "Copied" window |
+
+Two are worth a note.
+
+`useMediaQuery` is built on `useSyncExternalStore`, so it reports the right
+answer on the very first render. The usual state-plus-effect version claims
+the query does not match, then corrects itself — which is a flash of the wrong
+layout on every mount.
+
+`useTheme` treats `'system'` as a real choice, distinct from whatever it
+resolves to: it keeps following the OS when that changes. Render against
+`resolvedTheme`, and show `theme` in a theme picker.
+
+```tsx
+const { theme, resolvedTheme, setTheme } = useTheme();
+```
+
+It applies the theme the way Kosmos expects — a `dark` class on `<html>` —
+and remembers the choice in `localStorage` unless you pass
+`storageKey: null`. Storage failures are swallowed: a remembered theme is not
+worth failing a render over.
+
 ## Conventions
 
 Components are plain functions that join Tailwind class strings by hand —

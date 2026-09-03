@@ -5,8 +5,9 @@ import {
     type KeyboardEvent,
     type ReactNode,
     useContext,
-    useState,
 } from 'react';
+
+import { useControllableState } from '../../hooks';
 
 export type ToggleGroupSize = 'sm' | 'md' | 'lg';
 export type ToggleGroupVariant = 'segmented' | 'outline';
@@ -72,9 +73,12 @@ export function ToggleGroup({
     children,
     ...props
 }: ToggleGroupProps) {
-    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+    const [value, setValue] = useControllableState({
+        value: controlledValue,
+        defaultValue,
+        onChange: onValueChange,
+    });
 
-    const value = controlledValue ?? uncontrolledValue;
     const multiple = type === 'multiple';
 
     const toggle = (next: string) => {
@@ -92,11 +96,7 @@ export function ToggleGroup({
             result = [next];
         }
 
-        if (controlledValue === undefined) {
-            setUncontrolledValue(result);
-        }
-
-        onValueChange?.(result);
+        setValue(result);
     };
 
     /** Arrow keys move between items, as a toolbar-style group expects. */

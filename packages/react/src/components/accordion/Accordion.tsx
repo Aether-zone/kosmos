@@ -5,8 +5,9 @@ import {
     type KeyboardEvent,
     useContext,
     useId,
-    useState,
 } from 'react';
+
+import { useControllableState } from '../../hooks';
 
 import { IoChevronDown } from 'react-icons/io5';
 
@@ -84,10 +85,12 @@ export function Accordion({
     children,
     ...props
 }: AccordionProps) {
-    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+    const [open, setOpen] = useControllableState({
+        value: controlledValue,
+        defaultValue,
+        onChange: onValueChange,
+    });
     const baseId = useId();
-
-    const open = controlledValue ?? uncontrolledValue;
 
     const toggle = (value: string) => {
         const isOpen = open.includes(value);
@@ -104,11 +107,7 @@ export function Accordion({
             next = [value];
         }
 
-        if (controlledValue === undefined) {
-            setUncontrolledValue(next);
-        }
-
-        onValueChange?.(next);
+        setOpen(next);
     };
 
     /** Arrow keys move between headers, as the pattern expects. */
