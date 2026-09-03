@@ -1,5 +1,26 @@
 # @aether-zone/kosmos
 
+## 0.3.0
+
+### Minor Changes
+
+- 6198074: Add `AppBar` — the application's top bar, with `AppBarBrand`, `AppBarSection`
+  and `AppBarTitle`. Static, sticky or fixed; optionally constrained to a centred
+  column.
+
+### Patch Changes
+
+- b10196c: Restore the lighter accents in dark mode. `primary` and `destructive` had been
+  flattened to their light-theme values to keep white labels readable; they are
+  bright again and carry the dark label instead, which is how `success` and
+  `warning` already worked.
+- fd04808: Move every component onto `useControllableState`, so the controlled and
+  uncontrolled behaviour is defined in one place rather than reimplemented
+  fifteen times.
+- 28036d6: A link's hover colour no longer fades. Opacity blends toward the background,
+  which took the hover state to 3.6:1 on light and 2.8:1 on dark — below AA in
+  a state that owes it just as much as the resting one.
+
 ## 0.2.0
 
 ### Minor Changes
