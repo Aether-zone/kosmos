@@ -9,8 +9,9 @@ import {
     useEffect,
     useId,
     useRef,
-    useState,
 } from 'react';
+
+import { useControllableState } from '../../hooks';
 
 import { IoChevronDown } from 'react-icons/io5';
 
@@ -79,21 +80,15 @@ export function Dropdown({
     onOpenChange,
     children,
 }: DropdownProps) {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+    const [open, setOpen] = useControllableState({
+        value: controlledOpen,
+        defaultValue: defaultOpen,
+        onChange: onOpenChange,
+    });
     const menuId = useId();
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const rootRef = useRef<HTMLDivElement | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
-
-    const open = controlledOpen ?? uncontrolledOpen;
-
-    const setOpen = (nextOpen: boolean) => {
-        if (controlledOpen === undefined) {
-            setUncontrolledOpen(nextOpen);
-        }
-
-        onOpenChange?.(nextOpen);
-    };
 
     // The menu is portalled, so "inside" spans two detached subtrees.
     useDismiss({

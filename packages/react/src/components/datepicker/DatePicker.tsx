@@ -7,6 +7,8 @@ import {
     useState,
 } from 'react';
 
+import { useControllableState } from '../../hooks';
+
 import { IoCalendarOutline, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 
 import { OverlayPanel, useDismiss } from '../../internal';
@@ -100,10 +102,13 @@ export function DatePicker({
     className,
     ...props
 }: DatePickerProps) {
-    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+    const [value, setValue] = useControllableState({
+        value: controlledValue,
+        defaultValue,
+        onChange: onValueChange,
+    });
     const [open, setOpen] = useState(false);
 
-    const value = controlledValue ?? uncontrolledValue;
     const selected = fromISO(value);
 
     const [month, setMonth] = useState(() =>
@@ -163,14 +168,6 @@ export function DatePicker({
     }, [locale]);
 
     const days = useMemo(() => monthGrid(month), [month]);
-
-    const setValue = (nextValue: string) => {
-        if (controlledValue === undefined) {
-            setUncontrolledValue(nextValue);
-        }
-
-        onValueChange?.(nextValue);
-    };
 
     const outOfRange = (date: Date) => {
         const iso = toISO(date);

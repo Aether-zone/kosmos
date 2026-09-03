@@ -237,3 +237,35 @@ export const ArrowKeysReachEveryTab: Story = {
         );
     },
 };
+
+/**
+ * The contract `useControllableState` exists to keep: when a consumer supplies
+ * `value` and declines the change, the component must not move anyway. Getting
+ * this wrong shows up as a tab that flickers to the clicked one and back.
+ */
+export const ControlledIgnoresDeclinedChange: Story = {
+    render: () => (
+        // A fixed value with no handler: every click should be refused.
+        <Tabs value="account">
+            <TabsList>
+                <TabsTrigger value="account">Account</TabsTrigger>
+                <TabsTrigger value="password">Password</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="account">Account panel</TabsContent>
+            <TabsContent value="password">Password panel</TabsContent>
+        </Tabs>
+    ),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const [account, password] = canvas.getAllByRole('tab');
+
+        await userEvent.click(password);
+
+        await expect(account).toHaveAttribute('aria-selected', 'true');
+        await expect(password).toHaveAttribute('aria-selected', 'false');
+        await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
+            'Account panel',
+        );
+    },
+};

@@ -1,8 +1,9 @@
 import {
     type InputHTMLAttributes,
     useId,
-    useState,
 } from 'react';
+
+import { useControllableState } from '../../hooks';
 
 export type SliderSize = 'sm' | 'md' | 'lg';
 
@@ -73,21 +74,16 @@ export function Slider({
     disabled,
     ...props
 }: SliderProps) {
-    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+    const [value, setValue] = useControllableState({
+        value: controlledValue,
+        defaultValue,
+        onChange: onValueChange,
+    });
     const labelId = useId();
-
-    const value = controlledValue ?? uncontrolledValue;
 
     const percent =
         max === min ? 0 : ((value - min) / (max - min)) * 100;
 
-    const setValue = (nextValue: number) => {
-        if (controlledValue === undefined) {
-            setUncontrolledValue(nextValue);
-        }
-
-        onValueChange?.(nextValue);
-    };
 
     const accent = error ? 'var(--kosmos-color-destructive)' : 'var(--kosmos-color-primary)';
 

@@ -7,8 +7,9 @@ import {
     useContext,
     useId,
     useRef,
-    useState,
 } from 'react';
+
+import { useControllableState } from '../../hooks';
 
 import {
     OverlayPanel,
@@ -75,21 +76,15 @@ export function Popover({
     onOpenChange,
     children,
 }: PopoverProps) {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+    const [open, setOpen] = useControllableState({
+        value: controlledOpen,
+        defaultValue: defaultOpen,
+        onChange: onOpenChange,
+    });
     const contentId = useId();
     const anchorRef = useRef<HTMLDivElement | null>(null);
     const panelRef = useRef<HTMLDivElement | null>(null);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
-
-    const open = controlledOpen ?? uncontrolledOpen;
-
-    const setOpen = (nextOpen: boolean) => {
-        if (controlledOpen === undefined) {
-            setUncontrolledOpen(nextOpen);
-        }
-
-        onOpenChange?.(nextOpen);
-    };
 
     // The panel is portalled, so "inside" spans two detached subtrees.
     useDismiss({

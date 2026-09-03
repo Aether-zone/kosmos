@@ -6,8 +6,9 @@ import {
     type ReactNode,
     useContext,
     useId,
-    useState,
 } from 'react';
+
+import { useControllableState } from '../../hooks';
 
 export interface TabsProps {
     defaultValue?: string;
@@ -58,20 +59,19 @@ export function Tabs({
     onValueChange,
     children,
 }: TabsProps) {
-    const [uncontrolledValue, setUncontrolledValue] =
-        useState(defaultValue);
+    const [value, setValue] = useControllableState<string | undefined>({
+        value: controlledValue,
+        defaultValue,
+        // `defaultValue` is optional, so the state is `string | undefined`
+        // until something is selected — but a selection is always a string.
+        onChange: (next) => {
+            if (next !== undefined) {
+                onValueChange?.(next);
+            }
+        },
+    });
 
     const baseId = useId();
-
-    const value = controlledValue ?? uncontrolledValue;
-
-    const setValue = (nextValue: string) => {
-        if (controlledValue === undefined) {
-            setUncontrolledValue(nextValue);
-        }
-
-        onValueChange?.(nextValue);
-    };
 
     return (
         <TabsContext.Provider value={{ value, setValue, baseId }}>

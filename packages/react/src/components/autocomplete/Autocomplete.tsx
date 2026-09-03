@@ -8,6 +8,8 @@ import {
     useState,
 } from 'react';
 
+import { useControllableState } from '../../hooks';
+
 import { OverlayPanel, useDismiss } from '../../internal';
 
 export type AutocompleteSize = 'sm' | 'md' | 'lg';
@@ -67,7 +69,11 @@ export function Autocomplete({
     disabled,
     ...props
 }: AutocompleteProps) {
-    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+    const [value, setValue] = useControllableState({
+        value: controlledValue,
+        defaultValue,
+        onChange: onValueChange,
+    });
     const [open, setOpen] = useState(false);
     const [highlighted, setActiveIndex] = useState(-1);
 
@@ -75,7 +81,6 @@ export function Autocomplete({
     const rootRef = useRef<HTMLDivElement | null>(null);
     const listRef = useRef<HTMLDivElement | null>(null);
 
-    const value = controlledValue ?? uncontrolledValue;
 
     const matches = useMemo(
         () => options.filter((option) => filter(option, value)),
@@ -94,14 +99,6 @@ export function Autocomplete({
         onDismiss: () => setOpen(false),
         escape: false,
     });
-
-    const setValue = (nextValue: string) => {
-        if (controlledValue === undefined) {
-            setUncontrolledValue(nextValue);
-        }
-
-        onValueChange?.(nextValue);
-    };
 
     const select = (option: AutocompleteOption) => {
         if (option.disabled) {

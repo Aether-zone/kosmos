@@ -4,8 +4,9 @@ import {
     type KeyboardEvent,
     useId,
     useRef,
-    useState,
 } from 'react';
+
+import { useControllableState } from '../../hooks';
 
 export type OtpSize = 'sm' | 'md' | 'lg';
 
@@ -58,11 +59,15 @@ export function Otp({
     className,
     ...props
 }: OtpProps) {
-    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+    const [raw, setRaw] = useControllableState({
+        value: controlledValue,
+        defaultValue,
+        onChange: onValueChange,
+    });
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
     const groupId = useId();
 
-    const value = (controlledValue ?? uncontrolledValue).slice(0, length);
+    const value = raw.slice(0, length);
 
     // `focusSlot` moves focus from an event handler, and the resulting focus
     // event fires before React re-renders — so the guard below would read a
@@ -74,11 +79,7 @@ export function Otp({
         input.replace(PATTERNS[type], '').slice(0, length);
 
     const commit = (nextValue: string) => {
-        if (controlledValue === undefined) {
-            setUncontrolledValue(nextValue);
-        }
-
-        onValueChange?.(nextValue);
+        setRaw(nextValue);
 
         if (nextValue.length === length) {
             onComplete?.(nextValue);
