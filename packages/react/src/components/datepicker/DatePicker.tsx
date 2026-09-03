@@ -8,6 +8,8 @@ import {
     useState,
 } from 'react';
 
+import { OverlayPanel, useDismiss } from '../../internal';
+
 export type DatePickerSize = 'sm' | 'md' | 'lg';
 
 export interface DatePickerProps
@@ -110,6 +112,7 @@ export function DatePicker({
     const dialogId = useId();
     const rootRef = useRef<HTMLDivElement | null>(null);
     const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const calendarRef = useRef<HTMLDivElement | null>(null);
 
     // Reopening after the value changed should show the selected month.
     useEffect(() => {
@@ -118,32 +121,15 @@ export function DatePicker({
         }
     }, [open]);
 
-    useEffect(() => {
-        if (!open) {
-            return;
-        }
-
-        const handlePointerDown = (event: MouseEvent) => {
-            if (!rootRef.current?.contains(event.target as Node)) {
-                setOpen(false);
-            }
-        };
-
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                setOpen(false);
-                triggerRef.current?.focus();
-            }
-        };
-
-        document.addEventListener('mousedown', handlePointerDown);
-        document.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            document.removeEventListener('mousedown', handlePointerDown);
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [open]);
+    // The calendar is portalled, so "inside" spans two detached subtrees.
+    useDismiss({
+        enabled: open,
+        refs: [rootRef, calendarRef],
+        onDismiss: () => {
+            setOpen(false);
+            triggerRef.current?.focus();
+        },
+    });
 
     const formatter = useMemo(
         () =>
@@ -199,7 +185,7 @@ export function DatePicker({
     const todayISO = toISO(new Date());
 
     return (
-        <div ref={rootRef} className="relative w-full" {...props}>
+        <div ref={rootRef} className="w-full" {...props}>
             {name ? <input type="hidden" name={name} value={value} /> : null}
 
             <button
@@ -221,94 +207,97 @@ export function DatePicker({
                 </span>
             </button>
 
-            {open && !disabled ? (
-                <div
-                    id={dialogId}
-                    role="dialog"
-                    aria-label="Choose a date"
-                    className="absolute left-0 top-full z-50 mt-2 w-72 rounded-md border border-border bg-surface p-3 shadow-lg"
-                >
-                    <div className="mb-2 flex items-center justify-between">
-                        <CalendarNavButton
-                            label="Previous month"
-                            onClick={() => setMonth(addMonths(month, -1))}
-                        >
-                            ‹
-                        </CalendarNavButton>
-
-                        <div
-                            aria-live="polite"
-                            className="text-sm font-medium text-foreground"
-                        >
-                            {monthFormatter.format(month)}
-                        </div>
-
-                        <CalendarNavButton
-                            label="Next month"
-                            onClick={() => setMonth(addMonths(month, 1))}
-                        >
-                            ›
-                        </CalendarNavButton>
-                    </div>
+            <OverlayPanel
+                anchorRef={rootRef}
+                panelRef={calendarRef}
+                open={open && !disabled}
+                side="bottom"
+                align="start"
+                id={dialogId}
+                role="dialog"
+                aria-label="Choose a date"
+                className="z-50 w-72 rounded-md border border-border bg-surface p-3 shadow-lg"
+            >
+                <div className="mb-2 flex items-center justify-between">
+                    <CalendarNavButton
+                        label="Previous month"
+                        onClick={() => setMonth(addMonths(month, -1))}
+                    >
+                        ‹
+                    </CalendarNavButton>
 
                     <div
-                        role="grid"
-                        className="grid grid-cols-7 gap-0.5 text-center"
+                        aria-live="polite"
+                        className="text-sm font-medium text-foreground"
                     >
-                        {weekdays.map((weekday) => (
-                            <div
-                                key={weekday}
-                                aria-hidden="true"
-                                className="py-1 text-xs font-medium text-muted-foreground"
-                            >
-                                {weekday}
-                            </div>
-                        ))}
-
-                        {days.map((day) => {
-                            const iso = toISO(day);
-                            const inMonth = day.getMonth() === month.getMonth();
-                            const isSelected = iso === value;
-                            const isToday = iso === todayISO;
-                            const isDisabled = outOfRange(day);
-
-                            return (
-                                <button
-                                    key={iso}
-                                    type="button"
-                                    disabled={isDisabled}
-                                    aria-current={isToday ? 'date' : undefined}
-                                    aria-pressed={isSelected}
-                                    aria-label={formatter.format(day)}
-                                    className={[
-                                        'flex size-9 items-center justify-center rounded-md text-sm outline-none transition-colors',
-                                        'cursor-pointer',
-                                        'focus-visible:ring-2 focus-visible:ring-ring',
-                                        'disabled:pointer-events-none disabled:opacity-30',
-                                        isSelected
-                                            ? 'bg-primary text-primary-foreground'
-                                            : inMonth
-                                              ? 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                                              : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                                        !isSelected && isToday
-                                            ? 'ring-1 ring-ring'
-                                            : '',
-                                    ]
-                                        .filter(Boolean)
-                                        .join(' ')}
-                                    onClick={() => {
-                                        setValue(iso);
-                                        setOpen(false);
-                                        triggerRef.current?.focus();
-                                    }}
-                                >
-                                    {day.getDate()}
-                                </button>
-                            );
-                        })}
+                        {monthFormatter.format(month)}
                     </div>
+
+                    <CalendarNavButton
+                        label="Next month"
+                        onClick={() => setMonth(addMonths(month, 1))}
+                    >
+                        ›
+                    </CalendarNavButton>
                 </div>
-            ) : null}
+
+                <div
+                    role="grid"
+                    className="grid grid-cols-7 gap-0.5 text-center"
+                >
+                    {weekdays.map((weekday) => (
+                        <div
+                            key={weekday}
+                            aria-hidden="true"
+                            className="py-1 text-xs font-medium text-muted-foreground"
+                        >
+                            {weekday}
+                        </div>
+                    ))}
+
+                    {days.map((day) => {
+                        const iso = toISO(day);
+                        const inMonth = day.getMonth() === month.getMonth();
+                        const isSelected = iso === value;
+                        const isToday = iso === todayISO;
+                        const isDisabled = outOfRange(day);
+
+                        return (
+                            <button
+                                key={iso}
+                                type="button"
+                                disabled={isDisabled}
+                                aria-current={isToday ? 'date' : undefined}
+                                aria-pressed={isSelected}
+                                aria-label={formatter.format(day)}
+                                className={[
+                                    'flex size-9 items-center justify-center rounded-md text-sm outline-none transition-colors',
+                                    'cursor-pointer',
+                                    'focus-visible:ring-2 focus-visible:ring-ring',
+                                    'disabled:pointer-events-none disabled:opacity-30',
+                                    isSelected
+                                        ? 'bg-primary text-primary-foreground'
+                                        : inMonth
+                                          ? 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                                          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                                    !isSelected && isToday
+                                        ? 'ring-1 ring-ring'
+                                        : '',
+                                ]
+                                    .filter(Boolean)
+                                    .join(' ')}
+                                onClick={() => {
+                                    setValue(iso);
+                                    setOpen(false);
+                                    triggerRef.current?.focus();
+                                }}
+                            >
+                                {day.getDate()}
+                            </button>
+                        );
+                    })}
+                </div>
+            </OverlayPanel>
         </div>
     );
 }

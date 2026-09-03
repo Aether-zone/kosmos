@@ -40,17 +40,18 @@ contain the token values themselves, so import `@kosmos/tokens/tokens.css`
 Form controls
 : `Autocomplete`, `Checkbox`, `DatePicker`, `FileUpload`, `Form` (`Field`,
   `FieldLabel`, `FieldDescription`, `FieldError`), `Input`, `Label`, `Otp`,
-  `Select`, `Slider`, `Switch`, `Textarea`
+  `Radio`/`RadioGroup`, `Select`, `Slider`, `Switch`, `Textarea`
 
 Actions and navigation
-: `Breadcrumbs`, `Button`, `Dropdown`, `Sidenav`, `Tabs`, `Toolbar`
+: `Breadcrumbs`, `Button`, `Dropdown`, `Pagination`, `Sidenav`, `Tabs`,
+  `Toolbar`
 
 Feedback and overlay
-: `Alert`, `Dialog`, `Skeleton`, `Toast` (`ToastProvider`, `useToast`),
-  `Tooltip`
+: `Alert`, `Dialog`, `Progress`, `Skeleton`, `Spinner`, `Toast`
+  (`ToastProvider`, `useToast`), `Tooltip`
 
 Content
-: `Avatar`, `Badge`, `Card`, `EmptyState`, `Separator`
+: `Accordion`, `Avatar`, `Badge`, `Card`, `EmptyState`, `Separator`, `Table`
 
 Every component and its props are documented in Storybook.
 
@@ -75,6 +76,23 @@ const classes = [
 ```
 
 `className` always comes last so consumers can override.
+
+## Overlays
+
+`Dropdown`, `Tooltip`, `Autocomplete` and `DatePicker` render their panels
+through `src/internal/OverlayPanel`, which portals to `document.body` and
+positions against the anchor by measurement. Rendering in place is simpler,
+but the panel is then clipped by any ancestor with `overflow: hidden` — a
+Card, a scrolling sidebar, a table cell. Build new overlays on the same
+primitive rather than reaching for `absolute`.
+
+The trade-off portalling brings is that the panel leaves its DOM subtree, so
+"click outside" has to consider two detached trees; `useDismiss` takes a list
+of refs for exactly that reason.
+
+Modal surfaces additionally use `useFocusTrap` and `useScrollLock`.
+`aria-modal="true"` asserts the rest of the page is inert, and those two
+hooks are what make the assertion true.
 
 Use `*-foreground` tokens only on their matching **solid** fill —
 `text-success-foreground` is white, so it disappears on a `bg-success/10`

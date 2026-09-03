@@ -97,3 +97,28 @@ export const DefaultOpen: Story = {
         </Dropdown>
     ),
 };
+
+/**
+ * The menu is portalled to the document body, so it is not clipped by an
+ * ancestor's `overflow`. Before that it was cut off inside any scrolling or
+ * overflow-hidden container.
+ */
+export const InsideOverflowContainer: Story = {
+    render: () => (
+        <div className="h-28 w-72 overflow-hidden rounded-md border border-border bg-surface p-4">
+            <p className="mb-3 text-sm text-muted-foreground">
+                This box clips its content.
+            </p>
+
+            <Dropdown>
+                <DropdownTrigger>Options</DropdownTrigger>
+
+                <DropdownMenu>
+                    <DropdownItem>Profile</DropdownItem>
+                    <DropdownItem>Settings</DropdownItem>
+                    <DropdownItem>Sign out</DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
+        </div>
+    ),
+};

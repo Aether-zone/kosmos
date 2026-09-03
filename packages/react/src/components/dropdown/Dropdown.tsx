@@ -12,6 +12,8 @@ import {
     useState,
 } from 'react';
 
+import { OverlayPanel, useDismiss, type OverlayAlign } from '../../internal';
+
 export type DropdownAlign = 'start' | 'end';
 
 export interface DropdownProps {
@@ -44,6 +46,8 @@ interface DropdownContextValue {
     setOpen: (open: boolean) => void;
     menuId: string;
     triggerRef: RefObject<HTMLButtonElement | null>;
+    rootRef: RefObject<HTMLDivElement | null>;
+    menuRef: RefObject<HTMLDivElement | null>;
 }
 
 const DropdownContext = createContext<DropdownContextValue | null>(null);
@@ -77,6 +81,7 @@ export function Dropdown({
     const menuId = useId();
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const rootRef = useRef<HTMLDivElement | null>(null);
+    const menuRef = useRef<HTMLDivElement | null>(null);
 
     const open = controlledOpen ?? uncontrolledOpen;
 
@@ -88,30 +93,19 @@ export function Dropdown({
         onOpenChange?.(nextOpen);
     };
 
-    useEffect(() => {
-        if (!open) {
-            return;
-        }
-
-        const handlePointerDown = (event: MouseEvent) => {
-            if (!rootRef.current?.contains(event.target as Node)) {
-                setOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handlePointerDown);
-
-        return () => {
-            document.removeEventListener('mousedown', handlePointerDown);
-        };
-    }, [open]);
+    // The menu is portalled, so "inside" spans two detached subtrees.
+    useDismiss({
+        enabled: open,
+        refs: [rootRef, menuRef],
+        onDismiss: () => setOpen(false),
+        escape: false,
+    });
 
     return (
         <DropdownContext.Provider
-            value={{ open, setOpen, menuId, triggerRef }}
+            value={{ open, setOpen, menuId, triggerRef, rootRef, menuRef }}
         >
-            {/* Positions the menu against the trigger. */}
-            <div ref={rootRef} className="relative inline-block">
+            <div ref={rootRef} className="inline-block">
                 {children}
             </div>
         </DropdownContext.Provider>
@@ -173,13 +167,8 @@ export function DropdownTrigger({
 }
 
 const menuStyles =
-    'absolute top-full z-50 mt-2 min-w-48 rounded-md border border-border ' +
-    'bg-surface p-1 shadow-lg outline-none';
-
-const alignStyles: Record<DropdownAlign, string> = {
-    start: 'left-0',
-    end: 'right-0',
-};
+    'z-50 min-w-48 rounded-md border border-border bg-surface p-1 ' +
+    'shadow-lg outline-none';
 
 export function DropdownMenu({
     align = 'start',
@@ -187,8 +176,8 @@ export function DropdownMenu({
     onKeyDown,
     ...props
 }: DropdownMenuProps) {
-    const { open, setOpen, menuId, triggerRef } = useDropdown();
-    const menuRef = useRef<HTMLDivElement | null>(null);
+    const { open, setOpen, menuId, triggerRef, rootRef, menuRef } =
+        useDropdown();
 
     // Opening with the keyboard should land on the first item; opening with
     // the mouse should not steal focus from the page.
@@ -200,15 +189,9 @@ export function DropdownMenu({
         if (document.activeElement === triggerRef.current) {
             itemsOf(menuRef.current)[0]?.focus();
         }
-    }, [open]);
+    }, [open, menuRef, triggerRef]);
 
-    if (!open) {
-        return null;
-    }
-
-    const classes = [menuStyles, alignStyles[align], className]
-        .filter(Boolean)
-        .join(' ');
+    const classes = [menuStyles, className].filter(Boolean).join(' ');
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         onKeyDown?.(event);
@@ -249,8 +232,12 @@ export function DropdownMenu({
     };
 
     return (
-        <div
-            ref={menuRef}
+        <OverlayPanel
+            anchorRef={rootRef}
+            panelRef={menuRef}
+            open={open}
+            side="bottom"
+            align={align satisfies OverlayAlign}
             id={menuId}
             role="menu"
             aria-orientation="vertical"

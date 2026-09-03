@@ -2,10 +2,14 @@ import {
     createContext,
     type HTMLAttributes,
     type ReactNode,
+    type RefObject,
     useContext,
     useId,
+    useRef,
     useState,
 } from 'react';
+
+import { OverlayPanel } from '../../internal';
 
 export interface TooltipProps {
     children: ReactNode;
@@ -21,6 +25,7 @@ interface TooltipContextValue {
     open: boolean;
     setOpen: (open: boolean) => void;
     contentId: string;
+    anchorRef: RefObject<HTMLSpanElement | null>;
 }
 
 const TooltipContext = createContext<TooltipContextValue | null>(null);
@@ -40,16 +45,13 @@ function useTooltip() {
 export function Tooltip({ children }: TooltipProps) {
     const [open, setOpen] = useState(false);
     const contentId = useId();
+    const anchorRef = useRef<HTMLSpanElement | null>(null);
 
     return (
-        <TooltipContext.Provider value={{ open, setOpen, contentId }}>
-            {/*
-              * The content is positioned absolutely against this wrapper.
-              * Without it the nearest positioned ancestor is whatever the
-              * page happens to provide — usually <body>, which drops the
-              * tooltip far away from its trigger.
-              */}
-            <span className="relative inline-block">
+        <TooltipContext.Provider
+            value={{ open, setOpen, contentId, anchorRef }}
+        >
+            <span ref={anchorRef} className="inline-block">
                 {children}
             </span>
         </TooltipContext.Provider>
@@ -100,15 +102,10 @@ export function TooltipContent({
     className,
     ...props
 }: TooltipContentProps) {
-    const { open, contentId } = useTooltip();
-
-    if (!open) {
-        return null;
-    }
+    const { open, contentId, anchorRef } = useTooltip();
 
     const classes = [
-        'absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2',
-        'w-max max-w-xs rounded-md bg-foreground px-3 py-1.5',
+        'z-50 w-max max-w-xs rounded-md bg-foreground px-3 py-1.5',
         'text-xs text-background shadow-md',
         className,
     ]
@@ -116,7 +113,12 @@ export function TooltipContent({
         .join(' ');
 
     return (
-        <div
+        <OverlayPanel
+            anchorRef={anchorRef}
+            open={open}
+            side="bottom"
+            align="center"
+            offset={8}
             id={contentId}
             role="tooltip"
             className={classes}

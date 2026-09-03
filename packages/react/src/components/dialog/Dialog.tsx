@@ -4,9 +4,12 @@ import {
     type ReactNode,
     useContext,
     useEffect,
+    useRef,
     useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+
+import { useFocusTrap, useScrollLock } from '../../internal';
 
 export interface DialogProps {
     open?: boolean;
@@ -107,6 +110,11 @@ export function DialogContent({
     ...props
 }: DialogContentProps) {
     const { open, setOpen } = useDialog();
+    const panelRef = useRef<HTMLDivElement | null>(null);
+
+    // `aria-modal` claims the rest of the page is inert. These make it true.
+    useFocusTrap(panelRef, open);
+    useScrollLock(open);
 
     useEffect(() => {
         if (!open) {
@@ -148,8 +156,10 @@ export function DialogContent({
             />
 
             <div
+                ref={panelRef}
                 role="dialog"
                 aria-modal="true"
+                tabIndex={-1}
                 className={classes}
                 {...props}
             >

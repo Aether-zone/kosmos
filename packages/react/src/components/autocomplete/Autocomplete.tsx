@@ -9,6 +9,8 @@ import {
     useState,
 } from 'react';
 
+import { OverlayPanel, useDismiss } from '../../internal';
+
 export type AutocompleteSize = 'sm' | 'md' | 'lg';
 
 export interface AutocompleteOption {
@@ -72,6 +74,7 @@ export function Autocomplete({
 
     const listId = useId();
     const rootRef = useRef<HTMLDivElement | null>(null);
+    const listRef = useRef<HTMLDivElement | null>(null);
 
     const value = controlledValue ?? uncontrolledValue;
 
@@ -87,23 +90,13 @@ export function Autocomplete({
         );
     }, [matches.length]);
 
-    useEffect(() => {
-        if (!open) {
-            return;
-        }
-
-        const handlePointerDown = (event: MouseEvent) => {
-            if (!rootRef.current?.contains(event.target as Node)) {
-                setOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handlePointerDown);
-
-        return () => {
-            document.removeEventListener('mousedown', handlePointerDown);
-        };
-    }, [open]);
+    // The list is portalled, so "inside" spans two detached subtrees.
+    useDismiss({
+        enabled: open,
+        refs: [rootRef, listRef],
+        onDismiss: () => setOpen(false),
+        escape: false,
+    });
 
     const setValue = (nextValue: string) => {
         if (controlledValue === undefined) {
@@ -189,7 +182,7 @@ export function Autocomplete({
             : undefined;
 
     return (
-        <div ref={rootRef} className="relative w-full">
+        <div ref={rootRef} className="w-full">
             <input
                 type="text"
                 role="combobox"
@@ -215,49 +208,53 @@ export function Autocomplete({
                 {...props}
             />
 
-            {open && !disabled ? (
-                <div
-                    id={listId}
-                    role="listbox"
-                    className="absolute left-0 right-0 top-full z-50 mt-2 max-h-60 overflow-y-auto rounded-md border border-border bg-surface p-1 shadow-lg"
-                >
-                    {matches.length === 0 ? (
-                        <div className="px-3 py-2 text-sm text-muted-foreground">
-                            {emptyMessage}
+            <OverlayPanel
+                anchorRef={rootRef}
+                panelRef={listRef}
+                open={open && !disabled}
+                side="bottom"
+                align="start"
+                matchAnchorWidth
+                id={listId}
+                role="listbox"
+                className="z-50 max-h-60 overflow-y-auto rounded-md border border-border bg-surface p-1 shadow-lg"
+            >
+                {matches.length === 0 ? (
+                    <div className="px-3 py-2 text-sm text-muted-foreground">
+                        {emptyMessage}
+                    </div>
+                ) : (
+                    matches.map((option, index) => (
+                        <div
+                            key={option.value}
+                            id={`${listId}-option-${index}`}
+                            role="option"
+                            aria-selected={index === activeIndex}
+                            aria-disabled={option.disabled}
+                            className={[
+                                'cursor-pointer rounded-sm px-3 py-2 text-sm transition-colors',
+                                option.disabled
+                                    ? 'pointer-events-none opacity-50'
+                                    : 'text-foreground',
+                                index === activeIndex
+                                    ? 'bg-accent text-accent-foreground'
+                                    : '',
+                            ]
+                                .filter(Boolean)
+                                .join(' ')}
+                            // mousedown, not click: the input's blur would
+                            // otherwise tear the list down first.
+                            onMouseDown={(event) => {
+                                event.preventDefault();
+                                select(option);
+                            }}
+                            onMouseEnter={() => setActiveIndex(index)}
+                        >
+                            {option.label}
                         </div>
-                    ) : (
-                        matches.map((option, index) => (
-                            <div
-                                key={option.value}
-                                id={`${listId}-option-${index}`}
-                                role="option"
-                                aria-selected={index === activeIndex}
-                                aria-disabled={option.disabled}
-                                className={[
-                                    'cursor-pointer rounded-sm px-3 py-2 text-sm transition-colors',
-                                    option.disabled
-                                        ? 'pointer-events-none opacity-50'
-                                        : 'text-foreground',
-                                    index === activeIndex
-                                        ? 'bg-accent text-accent-foreground'
-                                        : '',
-                                ]
-                                    .filter(Boolean)
-                                    .join(' ')}
-                                // mousedown, not click: the input's blur would
-                                // otherwise tear the list down first.
-                                onMouseDown={(event) => {
-                                    event.preventDefault();
-                                    select(option);
-                                }}
-                                onMouseEnter={() => setActiveIndex(index)}
-                            >
-                                {option.label}
-                            </div>
-                        ))
-                    )}
-                </div>
-            ) : null}
+                    ))
+                )}
+            </OverlayPanel>
         </div>
     );
 }
