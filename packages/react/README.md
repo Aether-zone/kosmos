@@ -216,6 +216,20 @@ classes it can see in source, so a variable count cannot be interpolated into
 a class name — `Text`'s `lineClamp` maps through a lookup of literal
 `line-clamp-N` classes for that reason.
 
+## React Server Components
+
+The package declares `'use client'`, so importing a component into a Server
+Component works and renders it on the client. Without that declaration the
+build fails with `createContext is not a function`, because most of these
+components use state, refs or portals.
+
+The whole bundle is one module, so the boundary covers all of it — including
+the presentational components, which could in principle render on the server.
+Splitting them out would mean shipping the module graph unbundled, and
+extensionless relative imports in `.mjs` break under webpack's
+`fullySpecified` rule. Worth revisiting if server rendering the static
+components turns out to matter.
+
 ## Motion
 
 Animation is wrapped in Tailwind's `motion-safe:` variant, so it stops for
