@@ -39,6 +39,9 @@ contain the token values themselves, so import `@kosmos/tokens/tokens.css`
 
 ## Components
 
+Typography
+: `Blockquote`, `Code`, `Heading`, `Kbd`, `Link`, `List`/`ListItem`, `Text`
+
 Form controls
 : `Autocomplete`, `Checkbox`, `Combobox` (multi-select with chips),
   `DatePicker`, `FileUpload`, `Form` (`Field`, `FieldLabel`,
@@ -124,6 +127,22 @@ silently undone. `ContextMenu` and `Menubar` both wrap the move in
 `requestAnimationFrame` for this reason; without it their arrow keys and
 Escape appear to do nothing, because the panel that handles those keys was
 never focused.
+
+## Typography
+
+The text components consume the **semantic** type tokens — `text-body`,
+`text-label`, `text-heading`, `text-display` — rather than the raw `xs…5xl`
+scale, so a component asks for body text or a label rather than a size. Until
+these components existed the semantic layer was defined but unused.
+
+`Heading` keeps `level` and `size` independent: the level sets the tag and so
+the document outline, while the size sets the appearance. An `h2` can look
+small without breaking the outline to get there.
+
+One Tailwind constraint shows up here. Utilities are generated only from
+classes it can see in source, so a variable count cannot be interpolated into
+a class name — `Text`'s `lineClamp` maps through a lookup of literal
+`line-clamp-N` classes for that reason.
 
 ## Icons
 
