@@ -11,8 +11,18 @@ export interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
     external?: boolean;
 }
 
+/*
+ * No opacity on hover. Opacity blends a colour toward whatever is behind it,
+ * so it always *reduces* contrast: an 80% primary measured 3.6:1 on the light
+ * surface and 2.8:1 on the dark one, either side of the 4.5:1 a link owes in
+ * every state. The underline carries the hover affordance instead, and
+ * `subtle` and `muted` darken, which spends no contrast at all.
+ *
+ * (Deliberately not naming the utility here — Tailwind scans comments too,
+ * and would mint the class this exists to avoid.)
+ */
 const variantStyles: Record<LinkVariant, string> = {
-    default: 'text-primary hover:text-primary/80',
+    default: 'text-primary',
     subtle: 'text-foreground hover:text-primary',
     muted: 'text-muted-foreground hover:text-foreground',
 };

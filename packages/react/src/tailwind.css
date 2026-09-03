@@ -16,3 +16,6 @@
 @import "./styles.css";
 
 @source "./";
+
+/* Tests name classes in assertions; that must not generate them. */
+@source not "./__tests__";

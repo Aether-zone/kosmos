@@ -114,3 +114,32 @@ describe.each([
         expect(ratio).toBeGreaterThanOrEqual(NON_TEXT);
     });
 });
+
+/**
+ * Opacity on a text colour blends it toward whatever is behind, so it always
+ * *reduces* contrast — and a hover or disabled state owes the same 4.5:1 as
+ * the resting one. `text-primary/80` shipped at 3.6:1 on the light surface
+ * and 2.8:1 on the dark one before this caught it.
+ *
+ * Backgrounds are exempt: `bg-primary/10` is a deliberate tint, and the text
+ * sitting on it is checked above.
+ */
+describe('the compiled stylesheet', () => {
+    it('never sets a text colour through transparency', () => {
+        const stylesheet = readFileSync(
+            new URL('../../dist/styles.css', import.meta.url),
+            'utf8',
+        );
+
+        // Anchored on the property, so `border-color` is not mistaken for
+        // `color`; the value may contain a nested var(), so it runs to the
+        // end of the declaration rather than the first bracket.
+        const offenders = [
+            ...stylesheet.matchAll(
+                /([^{}]+)\{(?:[^{}]*?;)?color:color-mix\([^;}]*transparent\)/g,
+            ),
+        ].map(([, selector]) => selector.trim());
+
+        expect(offenders).toEqual([]);
+    });
+});
