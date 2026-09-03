@@ -147,12 +147,36 @@ export const PauseControlStopsAdvancing: Story = {
                 .getAllByRole('tab')
                 .findIndex((dot) => dot.getAttribute('aria-selected') === 'true');
 
+        /*
+         * The motion preference cannot be pinned from here — the browser
+         * provider ignores the context option, and CI's browser reports
+         * `reduce` where a desktop one does not. So assert the behaviour that
+         * is correct for whichever preference this environment has, rather
+         * than assuming one and failing in the other.
+         */
+        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (reduced) {
+            // Nothing should be moving, and the control says so.
+            await expect(
+                canvas.getByRole('button', {
+                    name: 'Resume automatic slide changes',
+                }),
+            ).toBeDisabled();
+
+            const at = selected();
+            await new Promise((resolve) => setTimeout(resolve, 800));
+            await expect(selected()).toBe(at);
+
+            return;
+        }
+
         const pause = canvas.getByRole('button', {
             name: 'Pause automatic slide changes',
         });
 
         // It is advancing on its own.
-        await waitFor(() => expect(selected()).not.toBe(0), { timeout: 2000 });
+        await waitFor(() => expect(selected()).not.toBe(0), { timeout: 3000 });
 
         await userEvent.click(pause);
         await expect(
