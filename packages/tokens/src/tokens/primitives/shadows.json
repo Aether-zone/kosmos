@@ -1,0 +1,48 @@
+{
+    "shadow": {
+        "none": {
+            "$value": "none",
+            "$type": "shadow"
+        },
+        "sm": {
+            "$value": {
+                "color": "#0000000d",
+                "offsetX": "0px",
+                "offsetY": "1px",
+                "blur": "2px",
+                "spread": "0px"
+            },
+            "$type": "shadow"
+        },
+        "md": {
+            "$value": {
+                "color": "#0000001a",
+                "offsetX": "0px",
+                "offsetY": "4px",
+                "blur": "6px",
+                "spread": "-1px"
+            },
+            "$type": "shadow"
+        },
+        "lg": {
+            "$value": {
+                "color": "#0000001a",
+                "offsetX": "0px",
+                "offsetY": "10px",
+                "blur": "15px",
+                "spread": "-3px"
+            },
+            "$type": "shadow"
+        },
+        "xl": {
+            "$value": {
+                "color": "#0000001a",
+                "offsetX": "0px",
+                "offsetY": "20px",
+                "blur": "25px",
+                "spread": "-5px"
+            },
+            "$type": "shadow"
+        }
+    }
+}

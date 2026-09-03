@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Version or publish
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      # Opening the Version Packages pull request.
+      pull-requests: write
+      # Pushing to the GitHub Packages registry.
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Changesets compares against the base branch to find what changed.
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://npm.pkg.github.com
+          scope: '@aether-zone'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Publishing an unbuilt package would ship an empty dist.
+      - name: Build packages
+        run: pnpm build
+
+      # With changesets pending this opens or updates a Version Packages PR.
+      # With none pending — that PR having just merged — it publishes.
+      - name: Version or publish
+        uses: changesets/action@v1
+        with:
+          version: pnpm version
+          publish: pnpm release
+          commit: 'Version packages'
+          title: 'Version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

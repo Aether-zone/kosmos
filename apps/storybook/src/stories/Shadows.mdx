@@ -1,0 +1,65 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design Tokens/Shadows" />
+
+# Shadows
+
+Kosmos provides a small elevation scale for surfaces and components.
+
+## Scale
+
+<div
+  style={{
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '32px',
+    marginTop: '24px',
+    padding: '16px',
+  }}
+>
+  {[
+    ['none', 'none'],
+    ['sm', '0 1px 2px 0 #0000000d'],
+    ['md', '0 4px 6px -1px #0000001a'],
+    ['lg', '0 10px 15px -3px #0000001a'],
+    ['xl', '0 20px 25px -5px #0000001a'],
+  ].map(([token, shadow]) => (
+    <div
+      key={token}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '24px',
+      }}
+    >
+      <code style={{ width: '48px' }}>{token}</code>
+
+      <div
+        style={{
+          width: '160px',
+          height: '80px',
+          background: 'var(--kosmos-color-surface)',
+          borderRadius: 'var(--kosmos-radius-md)',
+          boxShadow: shadow,
+        }}
+      />
+
+      <code style={{ opacity: 0.7 }}>{shadow}</code>
+    </div>
+  ))}
+</div>
+
+## Usage
+
+Shadows map to Tailwind's shadow utilities.
+
+```tsx
+<div className="shadow-md">
+  Content
+</div>
+```
+
+Use shadows to communicate elevation and separation between surfaces.
+
+- `none` — no elevation
+-

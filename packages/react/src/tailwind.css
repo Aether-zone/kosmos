@@ -1,0 +1,18 @@
+/**
+ * Build input for the self-contained stylesheet shipped to consumers.
+ *
+ * Tailwind v4 refuses to scan `node_modules`, so a consumer's own Tailwind
+ * build can never see the class names inside this package — no `@source`
+ * form changes that. The library therefore compiles its own utilities here
+ * and ships the result, so consumers need one import and no Tailwind at all.
+ *
+ * Preflight is deliberately absent: a component library has no business
+ * resetting its consumer's document.
+ */
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
+@import "@kosmos/tokens/tokens.css";
+@import "./styles.css";
+
+@source "./";

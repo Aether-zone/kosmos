@@ -1,0 +1,88 @@
+/**
+ * Maps Kosmos design tokens onto Tailwind's theme namespaces.
+ *
+ * `inline` matters here: without it Tailwind emits `--color-primary:
+ * var(--kosmos-color-primary)` into `:root`, which resolves once against
+ * `:root` and then inherits as a fixed value — a nested `.dark` container
+ * could never re-resolve it. `@theme inline` substitutes the token straight
+ * into each utility, so theming works at any depth in the tree.
+ */
+@theme inline {
+    --color-background: var(--kosmos-color-background);
+    --color-foreground: var(--kosmos-color-foreground);
+
+    --color-surface: var(--kosmos-color-surface);
+    --color-surface-foreground: var(--kosmos-color-surface-foreground);
+
+    --color-primary: var(--kosmos-color-primary);
+    --color-primary-foreground: var(--kosmos-color-primary-foreground);
+
+    --color-secondary: var(--kosmos-color-secondary);
+    --color-secondary-foreground: var(--kosmos-color-secondary-foreground);
+
+    --color-muted: var(--kosmos-color-muted);
+    --color-muted-foreground: var(--kosmos-color-muted-foreground);
+
+    --color-accent: var(--kosmos-color-accent);
+    --color-accent-foreground: var(--kosmos-color-accent-foreground);
+
+    --color-border: var(--kosmos-color-border);
+    --color-input: var(--kosmos-color-input);
+    --color-ring: var(--kosmos-color-ring);
+
+    --color-destructive: var(--kosmos-color-destructive);
+    --color-destructive-foreground: var(--kosmos-color-destructive-foreground);
+    /* Readable as text on a surface, where --color-destructive is not. */
+    --color-destructive-emphasis: var(--kosmos-color-destructive-emphasis);
+
+    --color-success: var(--kosmos-color-success);
+    --color-success-foreground: var(--kosmos-color-success-foreground);
+
+    --color-warning: var(--kosmos-color-warning);
+    --color-warning-foreground: var(--kosmos-color-warning-foreground);
+    /* Readable as text on a surface, where --color-warning is not. */
+    --color-warning-emphasis: var(--kosmos-color-warning-emphasis);
+
+    --radius-none: var(--kosmos-radius-none);
+    --radius-sm: var(--kosmos-radius-sm);
+    --radius-md: var(--kosmos-radius-md);
+    --radius-lg: var(--kosmos-radius-lg);
+    --radius-xl: var(--kosmos-radius-xl);
+    --radius-2xl: var(--kosmos-radius-2xl);
+    --radius-3xl: var(--kosmos-radius-3xl);
+    --radius-full: var(--kosmos-radius-full);
+
+    --shadow-none: var(--kosmos-shadow-none);
+    --shadow-sm: var(--kosmos-shadow-sm);
+    --shadow-md: var(--kosmos-shadow-md);
+    --shadow-lg: var(--kosmos-shadow-lg);
+    --shadow-xl: var(--kosmos-shadow-xl);
+
+    --font-sans: var(--kosmos-font-family-sans);
+    --font-mono: var(--kosmos-font-family-mono);
+
+    --text-xs: var(--kosmos-font-size-xs);
+    --text-sm: var(--kosmos-font-size-sm);
+    --text-md: var(--kosmos-font-size-md);
+    --text-lg: var(--kosmos-font-size-lg);
+    --text-xl: var(--kosmos-font-size-xl);
+    --text-2xl: var(--kosmos-font-size-2xl);
+    --text-3xl: var(--kosmos-font-size-3xl);
+    --text-4xl: var(--kosmos-font-size-4xl);
+    --text-5xl: var(--kosmos-font-size-5xl);
+
+    --text-body: var(--kosmos-font-size-body);
+    --text-body-small: var(--kosmos-font-size-body-small);
+    --text-label: var(--kosmos-font-size-label);
+    --text-heading-small: var(--kosmos-font-size-heading-small);
+    --text-heading: var(--kosmos-font-size-heading);
+    --text-heading-large: var(--kosmos-font-size-heading-large);
+    --text-display: var(--kosmos-font-size-display);
+}
+
+/**
+ * Kosmos themes by swapping token values under `.dark`, so `dark:` variants
+ * are rarely needed — but consumers still expect them to track the same
+ * class rather than the OS setting.
+ */
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));

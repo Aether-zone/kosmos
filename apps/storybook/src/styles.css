@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@import "@kosmos/tokens/tokens.css";
+
+/**
+ * The token -> Tailwind mapping, from the library. Storybook compiles its own
+ * Tailwind from source, so it wants the mapping rather than the precompiled
+ * bundle the package ships to consumers.
+ */
+@import "@aether-zone/kosmos/theme.css";
+
+@source "../../../packages/react/src";

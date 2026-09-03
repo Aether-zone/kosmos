@@ -1,0 +1,47 @@
+name: Chromatic
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A newer commit on the same branch makes an in-flight snapshot irrelevant.
+concurrency:
+  group: chromatic-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  chromatic:
+    name: Publish Storybook
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Chromatic diffs against the baseline of an earlier commit, so it
+          # needs the history rather than a shallow clone.
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Storybook imports @kosmos/tokens and @aether-zone/kosmos from dist,
+      # so the packages have to be built before it can be bundled.
+      - name: Build packages
+        run: pnpm build
+
+      - name: Publish to Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_KEY }}
+          workingDir: apps/storybook
+          buildScriptName: build-storybook

@@ -1,0 +1,126 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design Tokens/Typography" />
+
+# Typography
+
+Kosmos provides a consistent typography system for headings, body text, labels, and other UI content.
+
+## Font families
+## Font families
+
+### Sans
+
+<p style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', fontSize: '1.25rem' }}>
+  The quick brown fox jumps over the lazy dog.
+</p>
+
+```text
+sans
+ui-sans-serif, system-ui, sans-serif
+```
+
+### Mono
+
+<p style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', fontSize: '1.25rem' }}>
+  The quick brown fox jumps over the lazy dog.
+</p>
+
+```text
+mono
+ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace
+```
+
+## Font sizes
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '24px' }}>
+  {[
+    ['xs', '0.75rem'],
+    ['sm', '0.875rem'],
+    ['md', '1rem'],
+    ['lg', '1.125rem'],
+    ['xl', '1.25rem'],
+    ['2xl', '1.5rem'],
+    ['3xl', '1.875rem'],
+    ['4xl', '2.25rem'],
+    ['5xl', '3rem'],
+  ].map(([token, size]) => (
+    <div key={token}>
+      <div style={{ marginBottom: '4px', opacity: 0.6 }}>
+        <code>{token}</code> · <code>{size}</code>
+      </div>
+
+      <div style={{ fontSize: size }}>
+        The quick brown fox jumps over the lazy dog.
+      </div>
+    </div>
+  ))}
+</div>
+
+## Semantic sizes
+
+Semantic sizes should be preferred when defining component typography.
+
+| Token | Size |
+| --- | --- |
+| `body` | `1rem` |
+| `bodySmall` | `0.875rem` |
+| `label` | `0.875rem` |
+| `headingSmall` | `1.125rem` |
+| `heading` | `1.25rem` |
+| `headingLarge` | `1.5rem` |
+| `display` | `2.25rem` |
+
+## Font weights
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '24px' }}>
+  {[
+    ['normal', 400],
+    ['medium', 500],
+    ['semibold', 600],
+    ['bold', 700],
+  ].map(([token, weight]) => (
+    <div key={token}>
+      <div style={{ marginBottom: '4px', opacity: 0.6 }}>
+        <code>{token}</code> · <code>{weight}</code>
+      </div>
+
+      <div style={{ fontSize: '1.25rem', fontWeight: weight }}>
+        The quick brown fox jumps over the lazy dog.
+      </div>
+    </div>
+  ))}
+</div>
+
+## Line heights
+
+| Token | Value |
+| --- | --- |
+| `tight` | `1.25` |
+| `normal` | `1.5` |
+| `relaxed` | `1.75` |
+
+## Letter spacing
+
+| Token | Value |
+| --- | --- |
+| `tight` | `-0.025em` |
+| `normal` | `0em` |
+| `wide` | `0.025em` |
+
+## Usage
+
+Typography tokens map to the semantic typography utilities provided by Kosmos.
+
+```tsx
+<h1 className="text-4xl font-bold">
+  Page title
+</h1>
+
+<p className="text-base">
+  Body text
+</p>
+
+<span className="text-sm font-medium">
+  Label
+</span>

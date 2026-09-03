@@ -1,0 +1,121 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Design Tokens/Dark Mode" />
+
+# Dark Mode
+
+Kosmos supports light and dark themes through semantic color tokens.
+
+The underlying primitive colors remain unchanged. Semantic tokens map those primitives differently for each theme.
+
+## Light
+
+<div
+  style={{
+    background: 'var(--kosmos-color-background)',
+    color: 'var(--kosmos-color-foreground)',
+    border: '1px solid var(--kosmos-color-border)',
+    borderRadius: 'var(--kosmos-radius-lg)',
+    padding: '24px',
+  }}
+>
+  <h3 style={{ margin: '0 0 8px', color: 'inherit' }}>Light theme</h3>
+  <p style={{ margin: 0, color: 'inherit' }}>Background, foreground, surfaces, borders, and semantic colors use the light theme values.</p>
+</div>
+
+## Dark
+
+<div
+  className="dark"
+  style={{
+    background: 'var(--kosmos-color-background)',
+    color: 'var(--kosmos-color-foreground)',
+    border: '1px solid var(--kosmos-color-border)',
+    borderRadius: 'var(--kosmos-radius-lg)',
+    padding: '24px',
+  }}
+>
+  <h3 style={{ margin: '0 0 8px', color: 'inherit' }}>Dark theme</h3>
+  <p style={{ margin: 0, color: 'inherit' }}>The same semantic tokens resolve to dark theme values.</p>
+</div>
+
+## Usage
+
+Components should use semantic color tokens rather than primitive colors.
+
+```tsx
+<div className="bg-background text-foreground border-border">
+  Content
+</div>
+```
+
+When the theme changes, the component automatically receives the appropriate colors.
+
+Dark values are applied by putting `.dark` (or `[data-theme="dark"]`) on any
+ancestor — usually `<html>`, but any container works, which is how the two
+panels above sit side by side on this page. Use the **Theme** toolbar control
+to switch a story between themes.
+
+## Semantic tokens
+
+<table style={{ width: '100%', borderCollapse: 'collapse' }}>
+  <thead>
+    <tr>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '12px 16px',
+          borderBottom: '2px solid var(--kosmos-color-border)',
+        }}
+      >
+        Token
+      </th>
+      <th
+        style={{
+          textAlign: 'left',
+          padding: '12px 16px',
+          borderBottom: '2px solid var(--kosmos-color-border)',
+        }}
+      >
+        Purpose
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {[
+      ['background', 'Default page background'],
+      ['foreground', 'Default text color'],
+      ['surface', 'Elevated surfaces'],
+      ['surfaceForeground', 'Text on surfaces'],
+      ['primary', 'Primary actions and emphasis'],
+      ['secondary', 'Secondary actions and surfaces'],
+      ['muted', 'Muted backgrounds'],
+      ['accent', 'Accent backgrounds and actions'],
+      ['border', 'Default borders'],
+      ['input', 'Input controls'],
+      ['ring', 'Focus indicators'],
+      ['destructive', 'Destructive actions'],
+      ['success', 'Successful states'],
+      ['warning', 'Warning states'],
+    ].map(([token, purpose]) => (
+      <tr key={token}>
+        <td
+          style={{
+            padding: '10px 16px',
+            borderBottom: '1px solid var(--kosmos-color-border)',
+          }}
+        >
+          <code>{token}</code>
+        </td>
+        <td
+          style={{
+            padding: '10px 16px',
+            borderBottom: '1px solid var(--kosmos-color-border)',
+          }}
+        >
+          {purpose}
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
