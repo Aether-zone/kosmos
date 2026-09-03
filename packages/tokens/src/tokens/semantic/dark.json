@@ -34,10 +34,10 @@
             "$value": "{color.gray.800}"
         },
         "input": {
-            "$value": "{color.gray.800}"
+            "$value": "{color.gray.500}"
         },
         "ring": {
-            "$value": "{color.blue.600}"
+            "$value": "{color.blue.500}"
         },
         "destructive": {
             "$value": "{color.red.600}"

@@ -68,6 +68,11 @@ const TEXT = ['foreground', 'muted-foreground', 'warning-emphasis', 'destructive
 const SURFACES = ['background', 'surface', 'muted', 'accent'];
 
 const AA = 4.5;
+/** WCAG 1.4.11: visual information identifying a control. */
+const NON_TEXT = 3;
+
+/** Boundaries a user has to see to find or focus a control. */
+const CONTROL_EDGES = ['input', 'ring'];
 
 /**
  * The a11y story tests only ever render the light theme, so without this the
@@ -96,4 +101,16 @@ describe.each([
             expect(ratio).toBeGreaterThanOrEqual(AA);
         },
     );
+
+    // Text contrast alone let control borders ship at 1.3:1 — visible enough
+    // to a designer looking for them, invisible to anyone who is not.
+    it.each(
+        CONTROL_EDGES.flatMap((edge) =>
+            SURFACES.map((bg) => [edge, bg] as const),
+        ),
+    )('%s is discernible against %s', (edge, bg) => {
+        const ratio = contrast(colour(theme, edge), colour(theme, bg));
+
+        expect(ratio).toBeGreaterThanOrEqual(NON_TEXT);
+    });
 });

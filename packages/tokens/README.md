@@ -73,6 +73,18 @@ text on a light surface it is only 2.9:1 — and darkening it to fix that drops
 the fill to 3.6:1. `warningEmphasis` (yellow-700) is the text-safe pair. Use
 `warning` for fills, `warningEmphasis` for text and meaningful graphics.
 
+### border vs input
+
+They are deliberately different values. `border` is decoration — card edges,
+dividers, separators — which WCAG exempts from contrast requirements. `input`
+is a *control boundary*: it tells someone where a field begins, so 1.4.11 asks
+for 3:1 against the surface behind it. They started out as the same grey, at
+1.3:1, which made the distinction pointless and the controls hard to locate.
+
+`ring` is likewise decoupled from `primary` in dark: the fill has to carry
+white text, the ring has to stand out against whatever surface it lands on,
+and no single blue did both.
+
 ## Known wrinkle
 
 `primitives/typography.json` (`fontFamily.sans`) and
