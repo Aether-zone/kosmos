@@ -11,10 +11,11 @@ import {
     useAnchoredPosition,
     type OverlayAlign,
     type OverlaySide,
+    type VirtualAnchor,
 } from './useAnchoredPosition';
 
 export interface OverlayPanelProps extends HTMLAttributes<HTMLDivElement> {
-    anchorRef: RefObject<HTMLElement | null>;
+    anchorRef: RefObject<HTMLElement | VirtualAnchor | null>;
     open: boolean;
     side?: OverlaySide;
     align?: OverlayAlign;
@@ -57,7 +58,11 @@ export function OverlayPanel({
 
     useEffect(() => {
         if (open && matchAnchorWidth) {
-            setAnchorWidth(anchorRef.current?.offsetWidth);
+            const anchor = anchorRef.current;
+
+            setAnchorWidth(
+                anchor instanceof HTMLElement ? anchor.offsetWidth : undefined,
+            );
         }
     }, [open, matchAnchorWidth, anchorRef]);
 

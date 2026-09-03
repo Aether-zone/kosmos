@@ -4,6 +4,7 @@ export {
     useAnchoredPosition,
     type OverlayAlign,
     type OverlaySide,
+    type VirtualAnchor,
 } from './useAnchoredPosition';
 export { useDismiss } from './useDismiss';
 export { focusableWithin, useFocusTrap } from './useFocusTrap';

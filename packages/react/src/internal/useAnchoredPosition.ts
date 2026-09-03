@@ -6,6 +6,14 @@ import {
     type RefObject,
 } from 'react';
 
+/**
+ * Anything that can report a rectangle. A context menu anchors to the cursor
+ * rather than an element, so the hook takes a shape, not a DOM node.
+ */
+export interface VirtualAnchor {
+    getBoundingClientRect(): DOMRect;
+}
+
 export type OverlaySide = 'top' | 'right' | 'bottom' | 'left';
 export type OverlayAlign = 'start' | 'center' | 'end';
 
@@ -83,7 +91,7 @@ const fits = (
  * the anchor's position, and have to be placed by measurement instead.
  */
 export function useAnchoredPosition(
-    anchorRef: RefObject<HTMLElement | null>,
+    anchorRef: RefObject<HTMLElement | VirtualAnchor | null>,
     panelRef: RefObject<HTMLElement | null>,
     {
         side = 'bottom',

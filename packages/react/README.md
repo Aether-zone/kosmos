@@ -43,20 +43,21 @@ Form controls
 : `Autocomplete`, `Checkbox`, `Combobox` (multi-select with chips),
   `DatePicker`, `FileUpload`, `Form` (`Field`, `FieldLabel`,
   `FieldDescription`, `FieldError`), `Input`, `Label`, `Otp`,
-  `Radio`/`RadioGroup`, `Select`, `Slider`, `Switch`, `Textarea`,
+  `Radio`/`RadioGroup`, `Rating`, `Select`, `Slider`, `Switch`, `Textarea`,
   `ToggleGroup`
 
 Actions and navigation
-: `Breadcrumbs`, `Button`, `Dropdown`, `Pagination`, `Sidenav`, `Tabs`,
-  `Toolbar`
+: `Breadcrumbs`, `Button`, `Command` (inline or modal palette),
+  `ContextMenu`, `Dropdown`, `Menubar`, `Pagination`, `Sidenav`, `Tabs`,
+  `Toolbar`, `TreeView`
 
 Feedback and overlay
 : `Alert`, `AlertDialog`, `Dialog`, `Drawer`, `Popover`, `Progress`,
   `Skeleton`, `Spinner`, `Toast` (`ToastProvider`, `useToast`), `Tooltip`
 
 Content
-: `Accordion`, `Avatar`, `Badge`, `Card`, `Chip`, `EmptyState`, `Separator`,
-  `Table`
+: `Accordion`, `Avatar`, `Badge`, `Card`, `Carousel`, `Chip`, `EmptyState`,
+  `Separator`, `Table`, `Timeline`
 
 Every component and its props are documented in Storybook.
 
@@ -112,6 +113,17 @@ Which overlay to reach for:
 `AlertDialog` refuses backdrop dismissal and puts initial focus on the cancel
 action, so neither a stray click nor a reflexive Enter can confirm something
 destructive.
+
+`OverlayPanel` anchors to anything that can report a rectangle, not just a DOM
+node — `ContextMenu` passes a zero-size rect at the cursor.
+
+**Moving focus into an overlay opened by a click must be deferred a frame.**
+The browser settles focus onto `<body>` as part of handling that click, and it
+does so *after* React has run its effects, so an immediate `.focus()` is
+silently undone. `ContextMenu` and `Menubar` both wrap the move in
+`requestAnimationFrame` for this reason; without it their arrow keys and
+Escape appear to do nothing, because the panel that handles those keys was
+never focused.
 
 ## Icons
 
