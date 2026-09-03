@@ -1,15 +1,5 @@
 {
     "font": {
-        "family": {
-            "sans": {
-                "$value": "{fontFamily.sans}",
-                "$type": "fontFamily"
-            },
-            "mono": {
-                "$value": "{fontFamily.mono}",
-                "$type": "fontFamily"
-            }
-        },
         "size": {
             "body": {
                 "$value": "{fontSize.md}",
@@ -38,24 +28,6 @@
             "display": {
                 "$value": "{fontSize.4xl}",
                 "$type": "dimension"
-            }
-        },
-        "weight": {
-            "normal": {
-                "$value": "{fontWeight.normal}",
-                "$type": "fontWeight"
-            },
-            "medium": {
-                "$value": "{fontWeight.medium}",
-                "$type": "fontWeight"
-            },
-            "semibold": {
-                "$value": "{fontWeight.semibold}",
-                "$type": "fontWeight"
-            },
-            "bold": {
-                "$value": "{fontWeight.bold}",
-                "$type": "fontWeight"
             }
         },
         "lineHeight": {
