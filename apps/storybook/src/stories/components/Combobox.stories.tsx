@@ -98,6 +98,11 @@ export const Disabled: Story = {
         disabled: true,
         defaultValue: ['typescript', 'react'],
     },
+    parameters: {
+        // WCAG 1.4.3 exempts inactive user interface components; axe measures
+        // them anyway, so the rule is scoped off for this story alone.
+        a11y: { config: { rules: [{ id: 'color-contrast', enabled: false }] } },
+    },
 };
 
 export const ManySelected: Story = {

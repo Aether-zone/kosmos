@@ -1,8 +1,11 @@
 import {
     Children,
+    cloneElement,
     createContext,
+    isValidElement,
     type HTMLAttributes,
     type KeyboardEvent,
+    type ReactNode,
     useContext,
     useEffect,
     useId,
@@ -152,7 +155,14 @@ export function Carousel({
                         className="flex transition-transform duration-300 ease-out"
                         style={{ transform: `translateX(-${index * 100}%)` }}
                     >
-                        {slides}
+                        {slides.map((slide, position) => (
+                            <CarouselSlideId
+                                key={position}
+                                id={`${baseId}-slide-${position}`}
+                            >
+                                {slide}
+                            </CarouselSlideId>
+                        ))}
                     </div>
                 </div>
 
@@ -210,6 +220,13 @@ export function Carousel({
             </section>
         </CarouselContext.Provider>
     );
+}
+
+/** Gives each slide the id its dot's `aria-controls` points at. */
+function CarouselSlideId({ id, children }: { id: string; children: ReactNode }) {
+    return isValidElement<{ id?: string }>(children)
+        ? cloneElement(children, { id })
+        : children;
 }
 
 export function CarouselSlide({

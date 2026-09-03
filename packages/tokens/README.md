@@ -62,6 +62,17 @@ Note the `color` segment: semantic colors are `--kosmos-color-primary`, not
    role name, and give `dark.json` a matching entry.
 3. Expose it to Tailwind by mapping it in `packages/react/src/styles.css`.
 
+## Contrast
+
+Semantic colours are chosen to clear WCAG AA (4.5:1 for text) in the role they
+are used for, and the Storybook a11y tests enforce it.
+
+`warning` is the one role that needs two tokens. Yellow is intrinsically
+light: `warning` (yellow-600) carries dark text on a fill at 6.1:1, but as
+text on a light surface it is only 2.9:1 — and darkening it to fix that drops
+the fill to 3.6:1. `warningEmphasis` (yellow-700) is the text-safe pair. Use
+`warning` for fills, `warningEmphasis` for text and meaningful graphics.
+
 ## Known wrinkle
 
 `primitives/typography.json` (`fontFamily.sans`) and

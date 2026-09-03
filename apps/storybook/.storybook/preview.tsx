@@ -35,10 +35,9 @@ const preview: Preview = {
     },
 
     a11y: {
-      // 'todo' - show a11y violations in the test UI only
-      // 'error' - fail CI on a11y violations
-      // 'off' - skip a11y checks entirely
-      test: 'todo'
+      // Violations fail the test run. A story that genuinely cannot satisfy a
+      // rule opts out per-story via parameters.a11y.config.rules.
+      test: 'error'
     }
   },
 };

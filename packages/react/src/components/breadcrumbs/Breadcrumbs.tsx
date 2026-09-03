@@ -97,13 +97,10 @@ export function BreadcrumbEllipsis({
         .filter(Boolean)
         .join(' ');
 
+    // The gap is decorative: the links it stands for are still reachable, so
+    // it is hidden rather than given a name a presentational role cannot take.
     return (
-        <span
-            role="presentation"
-            aria-label="More links"
-            className={classes}
-            {...props}
-        >
+        <span aria-hidden="true" className={classes} {...props}>
             <IoEllipsisHorizontal className="size-4" />
         </span>
     );

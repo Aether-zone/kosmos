@@ -44,7 +44,8 @@ export const toneStyles: Record<TextTone, string> = {
     muted: 'text-muted-foreground',
     primary: 'text-primary',
     success: 'text-success',
-    warning: 'text-warning',
+    // The fill colour is unreadable as text; this is its text-safe pair.
+    warning: 'text-warning-emphasis',
     destructive: 'text-destructive',
 };
 

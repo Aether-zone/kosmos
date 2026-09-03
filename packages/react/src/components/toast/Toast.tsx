@@ -115,6 +115,8 @@ export function ToastViewport({
 
     return (
         <div
+            // A generic div is prohibited from taking a name; region allows it.
+            role="region"
             aria-live="polite"
             aria-label="Notifications"
             className={classes}

@@ -38,6 +38,8 @@
 
     --color-warning: var(--kosmos-color-warning);
     --color-warning-foreground: var(--kosmos-color-warning-foreground);
+    /* Readable as text on a surface, where --color-warning is not. */
+    --color-warning-emphasis: var(--kosmos-color-warning-emphasis);
 
     --radius-none: var(--kosmos-radius-none);
     --radius-sm: var(--kosmos-radius-sm);

@@ -78,7 +78,8 @@ export function Progress({
                 // An indeterminate bar reports no value, which is how
                 // assistive technology is told the duration is unknown.
                 aria-valuenow={indeterminate ? undefined : value}
-                aria-label={typeof label === 'string' ? label : undefined}
+                // A progressbar with no name is announced as nothing at all.
+                aria-label={typeof label === 'string' ? label : 'Progress'}
                 className={[
                     'w-full overflow-hidden rounded-full bg-muted',
                     trackSizes[size],

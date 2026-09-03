@@ -12,6 +12,10 @@ const meta = {
             control: 'boolean',
         },
     },
+    args: {
+        // Bare controls still need a name.
+        'aria-label': 'Enable notifications',
+    },
 } satisfies Meta<typeof Switch>;
 
 export default meta;

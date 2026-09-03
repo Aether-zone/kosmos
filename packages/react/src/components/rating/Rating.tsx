@@ -99,7 +99,7 @@ export function Rating({
                                 className={[
                                     sizeStyles[size],
                                     filled
-                                        ? 'text-warning'
+                                        ? 'text-warning-emphasis'
                                         : 'text-muted-foreground',
                                 ].join(' ')}
                             />
@@ -118,8 +118,8 @@ export function Rating({
                                 'cursor-pointer rounded-sm outline-none transition-colors',
                                 'focus-visible:ring-2 focus-visible:ring-ring',
                                 filled
-                                    ? 'text-warning'
-                                    : 'text-muted-foreground hover:text-warning',
+                                    ? 'text-warning-emphasis'
+                                    : 'text-muted-foreground hover:text-warning-emphasis',
                             ].join(' ')}
                             onClick={() => commit(star)}
                             onMouseEnter={() => setHovered(star)}

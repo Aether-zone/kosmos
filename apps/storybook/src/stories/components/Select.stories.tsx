@@ -15,6 +15,10 @@ const meta = {
             control: 'boolean',
         },
     },
+    args: {
+        // Bare controls still need a name.
+        'aria-label': 'Choose an option',
+    },
 } satisfies Meta<typeof Select>;
 
 export default meta;
@@ -112,19 +116,19 @@ export const WithLabel: Story = {
 export const States: Story = {
     render: () => (
         <div className="flex w-80 flex-col gap-4">
-            <Select defaultValue="">
+            <Select aria-label="Default" defaultValue="">
                 <option value="" disabled>
                     Default
                 </option>
                 <option value="one">Option one</option>
             </Select>
 
-            <Select error aria-invalid="true" defaultValue="one">
+            <Select aria-label="Error" error aria-invalid="true" defaultValue="one">
                 <option value="one">Error</option>
                 <option value="two">Option two</option>
             </Select>
 
-            <Select disabled defaultValue="one">
+            <Select aria-label="Disabled" disabled defaultValue="one">
                 <option value="one">Disabled</option>
                 <option value="two">Option two</option>
             </Select>

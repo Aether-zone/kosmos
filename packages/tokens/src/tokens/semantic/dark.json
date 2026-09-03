@@ -55,13 +55,16 @@
             "$value": "{color.green.500}"
         },
         "successForeground": {
-            "$value": "{color.white}"
+            "$value": "{color.gray.950}"
         },
         "warning": {
             "$value": "{color.yellow.500}"
         },
         "warningForeground": {
             "$value": "{color.gray.950}"
+        },
+        "warningEmphasis": {
+            "$value": "{color.yellow.400}"
         }
     }
 }

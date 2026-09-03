@@ -124,7 +124,7 @@ export function FileUpload({
         setFiles(multiple ? [...files, ...allowed] : allowed.slice(0, 1));
     };
 
-    const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
         event.preventDefault();
         setDragging(false);
 
@@ -151,7 +151,7 @@ export function FileUpload({
             : dragging
               ? 'border-ring bg-accent/50'
               : 'border-border',
-        'focus-visible:ring-2 focus-visible:ring-ring',
+        'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring',
     ]
         .filter(Boolean)
         .join(' ');
@@ -160,19 +160,15 @@ export function FileUpload({
 
     return (
         <div className={classes} {...props}>
-            <div
-                role="button"
-                tabIndex={disabled ? -1 : 0}
-                aria-disabled={disabled || undefined}
-                aria-describedby={description ? descriptionId : undefined}
+            {/*
+              * A <label> wrapping the input, rather than a role="button" div:
+              * it labels the input implicitly, activates it on click without
+              * any handler, and avoids putting a focusable control inside
+              * something that claims to be a button itself.
+              */}
+            <label
                 className={zoneClasses}
-                onClick={() => !disabled && inputRef.current?.click()}
-                onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        inputRef.current?.click();
-                    }
-                }}
+                onDrop={handleDrop}
                 onDragOver={(event) => {
                     event.preventDefault();
 
@@ -181,7 +177,6 @@ export function FileUpload({
                     }
                 }}
                 onDragLeave={() => setDragging(false)}
-                onDrop={handleDrop}
             >
                 <IoCloudUploadOutline
                     aria-hidden="true"
@@ -208,6 +203,7 @@ export function FileUpload({
                     accept={accept}
                     multiple={multiple}
                     disabled={disabled}
+                    aria-describedby={description ? descriptionId : undefined}
                     className="sr-only"
                     onChange={(event) => {
                         addFiles([...(event.target.files ?? [])]);
@@ -215,7 +211,7 @@ export function FileUpload({
                         event.target.value = '';
                     }}
                 />
-            </div>
+            </label>
 
             {files.length ? (
                 <ul className="mt-3 flex flex-col gap-2">

@@ -11,6 +11,10 @@ const meta = {
             control: 'boolean',
         },
     },
+    args: {
+        // Bare controls still need a name.
+        'aria-label': 'Accept terms',
+    },
 } satisfies Meta<typeof Checkbox>;
 
 export default meta;

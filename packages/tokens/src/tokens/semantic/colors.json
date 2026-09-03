@@ -38,7 +38,7 @@
         },
         "mutedForeground": {
             "$type": "color",
-            "$value": "{color.gray.500}"
+            "$value": "{color.gray.600}"
         },
         "accent": {
             "$type": "color",
@@ -70,7 +70,7 @@
         },
         "success": {
             "$type": "color",
-            "$value": "{color.green.600}"
+            "$value": "{color.green.700}"
         },
         "successForeground": {
             "$type": "color",
@@ -83,6 +83,10 @@
         "warningForeground": {
             "$type": "color",
             "$value": "{color.gray.900}"
+        },
+        "warningEmphasis": {
+            "$type": "color",
+            "$value": "{color.yellow.700}"
         }
     }
 }

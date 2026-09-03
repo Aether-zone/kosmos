@@ -5,6 +5,7 @@ import {
     type MouseEvent,
     type ReactNode,
     useContext,
+    useId,
     useState,
 } from 'react';
 import { IoClose } from 'react-icons/io5';
@@ -49,6 +50,7 @@ export interface DrawerCloseProps
 interface DrawerContextValue {
     open: boolean;
     setOpen: (open: boolean) => void;
+    titleId: string;
 }
 
 const DrawerContext = createContext<DrawerContextValue | null>(null);
@@ -72,6 +74,7 @@ export function Drawer({
     children,
 }: DrawerProps) {
     const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+    const titleId = useId();
 
     const open = controlledOpen ?? uncontrolledOpen;
 
@@ -84,7 +87,7 @@ export function Drawer({
     };
 
     return (
-        <DrawerContext.Provider value={{ open, setOpen }}>
+        <DrawerContext.Provider value={{ open, setOpen, titleId }}>
             {children}
         </DrawerContext.Provider>
     );
@@ -150,7 +153,7 @@ export function DrawerContent({
     children,
     ...props
 }: DrawerContentProps) {
-    const { open, setOpen } = useDrawer();
+    const { open, setOpen, titleId } = useDrawer();
 
     const horizontal = side === 'left' || side === 'right';
 
@@ -169,6 +172,8 @@ export function DrawerContent({
         <ModalOverlay
             open={open}
             onDismiss={() => setOpen(false)}
+            // `aria-modal` without a name leaves the drawer unannounced.
+            aria-labelledby={titleId}
             className={classes}
             {...props}
         >
@@ -200,6 +205,8 @@ export function DrawerHeader({ className, ...props }: DrawerHeaderProps) {
 }
 
 export function DrawerTitle({ className, ...props }: DrawerTitleProps) {
+    const { titleId } = useDrawer();
+
     const classes = [
         'text-base font-semibold leading-none text-foreground',
         className,
@@ -207,7 +214,7 @@ export function DrawerTitle({ className, ...props }: DrawerTitleProps) {
         .filter(Boolean)
         .join(' ');
 
-    return <h2 className={classes} {...props} />;
+    return <h2 id={titleId} className={classes} {...props} />;
 }
 
 export function DrawerDescription({

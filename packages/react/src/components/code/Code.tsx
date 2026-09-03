@@ -34,7 +34,8 @@ export function Code({
     // A block renders inside <pre> so whitespace and line breaks survive.
     if (block) {
         return (
-            <pre className={classes} {...props}>
+            // Scrollable, so it must be focusable for keyboard scrolling.
+            <pre tabIndex={0} className={classes} {...props}>
                 <code>{children}</code>
             </pre>
         );

@@ -56,7 +56,7 @@ async function overrideFilter(overrides) {
 
 /**
  * Each theme is built as its own dictionary. Style Dictionary deep-merges all
- * sources into a single token tree, so light.json and dark.json — which
+ * sources into a single token tree, so colors.json and dark.json — which
  * declare the same color.* paths — cannot be built together: whichever sorted
  * last would be the only one left standing.
  */

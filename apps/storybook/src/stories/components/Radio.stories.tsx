@@ -111,9 +111,9 @@ export const WithoutLabels: Story = {
         defaultValue: 'b',
         children: (
             <>
-                <Radio value="a" />
-                <Radio value="b" />
-                <Radio value="c" />
+                <Radio value="a" aria-label="Option A" />
+                <Radio value="b" aria-label="Option B" />
+                <Radio value="c" aria-label="Option C" />
             </>
         ),
     },

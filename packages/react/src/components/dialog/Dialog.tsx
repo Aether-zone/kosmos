@@ -4,6 +4,7 @@ import {
     type MouseEvent,
     type ReactNode,
     useContext,
+    useId,
     useState,
 } from 'react';
 
@@ -41,6 +42,7 @@ export interface DialogFooterProps
 interface DialogContextValue {
     open: boolean;
     setOpen: (open: boolean) => void;
+    titleId: string;
 }
 
 const DialogContext = createContext<DialogContextValue | null>(null);
@@ -64,6 +66,7 @@ export function Dialog({
     children,
 }: DialogProps) {
     const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+    const titleId = useId();
 
     const open = controlledOpen ?? uncontrolledOpen;
 
@@ -76,7 +79,7 @@ export function Dialog({
     };
 
     return (
-        <DialogContext.Provider value={{ open, setOpen }}>
+        <DialogContext.Provider value={{ open, setOpen, titleId }}>
             {children}
         </DialogContext.Provider>
     );
@@ -118,7 +121,7 @@ export function DialogContent({
     children,
     ...props
 }: DialogContentProps) {
-    const { open, setOpen } = useDialog();
+    const { open, setOpen, titleId } = useDialog();
 
     const classes = [
         'fixed inset-0 flex items-center justify-center p-4',
@@ -131,6 +134,8 @@ export function DialogContent({
         <ModalOverlay
             open={open}
             onDismiss={() => setOpen(false)}
+            // `aria-modal` without a name leaves the dialog unannounced.
+            aria-labelledby={titleId}
             className={classes}
             {...props}
         >
@@ -159,6 +164,8 @@ export function DialogTitle({
     className,
     ...props
 }: DialogTitleProps) {
+    const { titleId } = useDialog();
+
     const classes = [
         'text-lg font-semibold leading-none tracking-tight text-foreground',
         className,
@@ -166,7 +173,7 @@ export function DialogTitle({
         .filter(Boolean)
         .join(' ');
 
-    return <h2 className={classes} {...props} />;
+    return <h2 id={titleId} className={classes} {...props} />;
 }
 
 export function DialogDescription({
