@@ -5,6 +5,17 @@ CSS v4 utilities that resolve to [`@kosmos/tokens`](../tokens/README.md).
 
 ## Install
 
+The package is published to **GitHub Packages**, so npm needs to be told where
+the `@aether-zone` scope lives. In an `.npmrc` beside your `package.json`:
+
+```
+@aether-zone:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+`GITHUB_TOKEN` is a personal access token with the `read:packages` scope —
+GitHub Packages requires authentication even for public packages.
+
 ```bash
 pnpm add @aether-zone/kosmos
 ```
@@ -33,9 +44,36 @@ export function Example() {
 }
 ```
 
-`styles.css` maps Kosmos tokens onto Tailwind's theme namespaces. It does not
-contain the token values themselves, so import `@kosmos/tokens/tokens.css`
-(or your own stylesheet defining the same `--kosmos-*` variables) as well.
+That single stylesheet is all you need. **You do not need Tailwind** — it is
+precompiled and self-contained: token values, the light and dark themes, and
+every utility the components use. It carries no preflight, so it will not
+reset your document.
+
+This matters because Tailwind v4 refuses to scan `node_modules`. A library
+that shipped only a theme mapping would leave a consumer's own Tailwind build
+unable to see any of its class names, and every component would render
+unstyled — no `@source` incantation on either side changes that.
+
+### Stylesheets
+
+| Import | Contents | Use when |
+| --- | --- | --- |
+| `@aether-zone/kosmos/styles.css` | Tokens, themes and all compiled utilities | Almost always |
+| `@aether-zone/kosmos/tokens.css` | Only the `--kosmos-*` variables | You want the tokens without any component CSS |
+| `@aether-zone/kosmos/theme.css` | Only the token → Tailwind `@theme inline` mapping | You compile your own Tailwind and want Kosmos tokens behind its utilities |
+
+`styles.css` already contains `tokens.css`, so importing both is redundant.
+
+### Dark mode
+
+Put `.dark` (or `[data-theme="dark"]`) on any ancestor — usually `<html>`:
+
+```html
+<html class="dark">
+```
+
+No provider and no JavaScript: the tokens swap in CSS, and every component
+follows.
 
 ## Components
 

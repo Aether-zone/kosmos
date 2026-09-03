@@ -13,10 +13,12 @@
             "types": "./dist/index.d.mts",
             "import": "./dist/index.mjs"
         },
-        "./styles.css": "./dist/styles.css"
+        "./styles.css": "./dist/styles.css",
+        "./tokens.css": "./dist/tokens.css",
+        "./theme.css": "./dist/theme.css"
     },
     "scripts": {
-        "build": "tsup && cpx \"src/styles.css\" dist",
+        "build": "tsup && node build-styles.mjs && tailwindcss -i src/tailwind.css -o dist/styles.css --minify",
         "dev": "tsup --watch",
         "lint": "eslint .",
         "test": "vitest run",
@@ -27,17 +29,42 @@
         "react-dom": "^19.0.0"
     },
     "dependencies": {
-        "@kosmos/tokens": "workspace:*",
         "react-icons": "^5.7.0"
     },
     "devDependencies": {
+        "@kosmos/tokens": "workspace:*",
+        "@tailwindcss/cli": "^4.3.3",
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
-        "cpx2": "^9.0.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
+        "tailwindcss": "^4.3.3",
         "tsup": "^8.5.0",
         "typescript": "^5.0.0",
         "vitest": "^3.0.0"
+    },
+    "description": "The Kosmos React component library, built on design tokens.",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Aether-zone/kosmos.git",
+        "directory": "packages/react"
+    },
+    "homepage": "https://github.com/Aether-zone/kosmos#readme",
+    "bugs": {
+        "url": "https://github.com/Aether-zone/kosmos/issues"
+    },
+    "keywords": [
+        "design-system",
+        "react",
+        "components",
+        "design-tokens",
+        "tailwind"
+    ],
+    "sideEffects": [
+        "*.css"
+    ],
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
     }
 }

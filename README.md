@@ -75,11 +75,13 @@ export function Example() {
 }
 ```
 
-Components are styled with Tailwind utility classes that resolve to Kosmos
-tokens, so the consuming app needs Tailwind v4 and must import the token
-stylesheet alongside the component styles.
+That one stylesheet is self-contained — tokens, both themes and every utility
+the components use — so consumers need no Tailwind of their own. See
+[`packages/react/README.md`](packages/react/README.md) for installing from
+GitHub Packages and for the other two stylesheet entry points.
 
 ## Documentation
 
 - [Architecture decisions](docs/adr/README.md) — why the system is put together this way.
+- [Publishing](packages/react/README.md#install) — the package is released to GitHub Packages by `.github/workflows/publish.yml` when a GitHub Release is published.
 - [`CLAUDE.md`](CLAUDE.md) — working notes for automated contributors.
