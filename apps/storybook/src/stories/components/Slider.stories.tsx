@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, fireEvent, within } from 'storybook/test';
 
 import { Slider } from '@aether-zone/kosmos';
 
@@ -126,4 +127,22 @@ function ControlledSlider() {
 
 export const Controlled: Story = {
     render: () => <ControlledSlider />,
+};
+
+/** Same contract, on a value rather than a selection. */
+export const ControlledIgnoresDeclinedChange: Story = {
+    args: { value: 40, label: 'Volume', showValue: true },
+    play: async ({ canvasElement }) => {
+        const input = within(canvasElement).getByRole('slider') as HTMLInputElement;
+
+        await expect(input.value).toBe('40');
+
+        // fireEvent, not a raw dispatch: React's value tracker swallows a
+        // direct assignment, so onChange would never fire and the test would
+        // prove nothing.
+        await fireEvent.change(input, { target: { value: '80' } });
+
+        // Nothing is listening, so React restores the value it was given.
+        await expect(input.value).toBe('40');
+    },
 };

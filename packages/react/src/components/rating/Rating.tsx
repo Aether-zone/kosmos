@@ -1,4 +1,6 @@
 import { type HTMLAttributes, useId, useState } from 'react';
+
+import { useControllableState } from '../../hooks';
 import { IoStar, IoStarOutline } from 'react-icons/io5';
 
 export type RatingSize = 'sm' | 'md' | 'lg';
@@ -39,24 +41,22 @@ export function Rating({
     className,
     ...props
 }: RatingProps) {
-    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+    const [value, setValue] = useControllableState({
+        value: controlledValue,
+        defaultValue,
+        onChange: onValueChange,
+    });
     const [hovered, setHovered] = useState<number | null>(null);
     const labelId = useId();
 
-    const value = controlledValue ?? uncontrolledValue;
     const interactive = !readOnly && !disabled;
 
     // Hover previews the rating without committing it.
     const shown = hovered ?? value;
 
     const commit = (next: number) => {
-        const resolved = clearable && next === value ? 0 : next;
-
-        if (controlledValue === undefined) {
-            setUncontrolledValue(resolved);
-        }
-
-        onValueChange?.(resolved);
+        // Clicking the active star again clears the rating.
+        setValue(clearable && next === value ? 0 : next);
     };
 
     const classes = ['inline-flex items-center gap-2', className]

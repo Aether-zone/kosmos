@@ -102,10 +102,15 @@ export function AppBarSection({
     return <div className={classes} {...props} />;
 }
 
+/*
+ * The hover affordance is an underline, not a fade. Opacity blends a colour
+ * toward whatever is behind it, so fading the brand on hover would spend
+ * contrast in a state that owes just as much as the resting one.
+ */
 const brandStyles =
     'flex min-w-0 shrink-0 items-center gap-2 rounded-sm ' +
     'text-base font-semibold text-foreground no-underline outline-none ' +
-    'transition-colors hover:text-foreground/80 ' +
+    'transition-colors hover:underline ' +
     'focus-visible:ring-2 focus-visible:ring-ring';
 
 export function AppBarBrand({

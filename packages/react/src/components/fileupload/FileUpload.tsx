@@ -7,6 +7,8 @@ import {
     useState,
 } from 'react';
 
+import { useControllableState } from '../../hooks';
+
 import { IoCloudUploadOutline, IoClose } from 'react-icons/io5';
 
 export interface FileUploadProps
@@ -79,20 +81,15 @@ export function FileUpload({
     className,
     ...props
 }: FileUploadProps) {
-    const [uncontrolledFiles, setUncontrolledFiles] = useState<File[]>([]);
+    const [files, setFiles] = useControllableState<File[]>({
+        value: controlledFiles,
+        defaultValue: [],
+        onChange: onFilesChange,
+    });
     const [dragging, setDragging] = useState(false);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const descriptionId = useId();
 
-    const files = controlledFiles ?? uncontrolledFiles;
-
-    const setFiles = (nextFiles: File[]) => {
-        if (controlledFiles === undefined) {
-            setUncontrolledFiles(nextFiles);
-        }
-
-        onFilesChange?.(nextFiles);
-    };
 
     const addFiles = (incoming: File[]) => {
         const wrongType = incoming.filter(

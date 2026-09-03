@@ -19,7 +19,7 @@ import {
     IoPlay,
 } from 'react-icons/io5';
 
-import { usePrefersReducedMotion } from '../../hooks';
+import { useControllableState, usePrefersReducedMotion } from '../../hooks';
 
 export interface CarouselProps
     extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
@@ -76,7 +76,11 @@ export function Carousel({
     children,
     ...props
 }: CarouselProps) {
-    const [uncontrolledIndex, setUncontrolledIndex] = useState(defaultIndex);
+    const [rawIndex, setIndex] = useControllableState({
+        value: controlledIndex,
+        defaultValue: defaultIndex,
+        onChange: onIndexChange,
+    });
     const [hovered, setHovered] = useState(false);
     const [stopped, setStopped] = useState(false);
     const reducedMotion = usePrefersReducedMotion();
@@ -86,19 +90,16 @@ export function Carousel({
     const slides = Children.toArray(children);
     const count = slides.length;
 
-    const index = Math.min(controlledIndex ?? uncontrolledIndex, count - 1);
+    // Slides can be removed under a stale index.
+    const index = Math.min(rawIndex, count - 1);
 
-    const go = (next: number) => {
-        const resolved = loop
+    /** Wraps or clamps, depending on `loop`. */
+    const resolve = (next: number) =>
+        loop
             ? (next + count) % count
             : Math.min(Math.max(next, 0), count - 1);
 
-        if (controlledIndex === undefined) {
-            setUncontrolledIndex(resolved);
-        }
-
-        onIndexChange?.(resolved);
-    };
+    const go = (next: number) => setIndex(resolve(next));
 
     /**
      * Auto-advance stops on hover and focus so it never pulls a slide out from
@@ -114,29 +115,15 @@ export function Carousel({
             return;
         }
 
-        const timer = window.setInterval(() => {
-            const next = loop
-                ? (index + 1) % count
-                : Math.min(index + 1, count - 1);
-
-            if (controlledIndex === undefined) {
-                setUncontrolledIndex(next);
-            }
-
-            onIndexChange?.(next);
-        }, autoPlay);
+        const timer = window.setInterval(
+            () => setIndex(resolve(index + 1)),
+            autoPlay,
+        );
 
         return () => window.clearInterval(timer);
-    }, [
-        running,
-        autoPlay,
-        hovered,
-        index,
-        count,
-        loop,
-        controlledIndex,
-        onIndexChange,
-    ]);
+        // `resolve` closes over `loop` and `count`, both listed.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [running, autoPlay, hovered, index, count, loop, setIndex]);
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         const next = {

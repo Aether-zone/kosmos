@@ -7,6 +7,8 @@ import {
     useState,
 } from 'react';
 
+import { useControllableState } from '../../hooks';
+
 import { OverlayPanel, useDismiss } from '../../internal';
 import { Chip } from '../chip';
 
@@ -79,7 +81,11 @@ export function Combobox({
     id,
     className,
 }: ComboboxProps) {
-    const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+    const [value, setValue] = useControllableState<string[]>({
+        value: controlledValue,
+        defaultValue,
+        onChange: onValueChange,
+    });
     const [query, setQuery] = useState('');
     const [open, setOpen] = useState(false);
     const [highlighted, setActiveIndex] = useState(-1);
@@ -93,7 +99,6 @@ export function Combobox({
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const inputId = id ?? generatedId;
-    const value = controlledValue ?? uncontrolledValue;
 
     const allOptions = useMemo(
         () => [...options, ...created],
@@ -146,26 +151,18 @@ export function Combobox({
         escape: false,
     });
 
-    const commit = (next: string[]) => {
-        if (controlledValue === undefined) {
-            setUncontrolledValue(next);
-        }
-
-        onValueChange?.(next);
-    };
-
     const add = (option: ComboboxOption) => {
         if (option.disabled || atLimit || value.includes(option.value)) {
             return;
         }
 
-        commit([...value, option.value]);
+        setValue([...value, option.value]);
         setQuery('');
         setActiveIndex(-1);
     };
 
     const remove = (entry: string) => {
-        commit(value.filter((current) => current !== entry));
+        setValue(value.filter((current) => current !== entry));
     };
 
     const create = () => {

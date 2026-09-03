@@ -6,8 +6,9 @@ import {
     type ReactNode,
     useContext,
     useId,
-    useState,
 } from 'react';
+
+import { useControllableState } from '../../hooks';
 import { IoClose } from 'react-icons/io5';
 
 import { ModalOverlay, Slot } from '../../internal';
@@ -73,18 +74,12 @@ export function Drawer({
     onOpenChange,
     children,
 }: DrawerProps) {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+    const [open, setOpen] = useControllableState({
+        value: controlledOpen,
+        defaultValue: defaultOpen,
+        onChange: onOpenChange,
+    });
     const titleId = useId();
-
-    const open = controlledOpen ?? uncontrolledOpen;
-
-    const setOpen = (nextOpen: boolean) => {
-        if (controlledOpen === undefined) {
-            setUncontrolledOpen(nextOpen);
-        }
-
-        onOpenChange?.(nextOpen);
-    };
 
     return (
         <DrawerContext.Provider value={{ open, setOpen, titleId }}>

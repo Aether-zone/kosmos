@@ -4,8 +4,9 @@ import {
     type KeyboardEvent,
     type ReactNode,
     useContext,
-    useState,
 } from 'react';
+
+import { useControllableState } from '../../hooks';
 import { IoChevronForward } from 'react-icons/io5';
 
 export interface TreeViewProps
@@ -68,32 +69,29 @@ export function TreeView({
     children,
     ...props
 }: TreeViewProps) {
-    const [uncontrolledExpanded, setUncontrolledExpanded] =
-        useState(defaultExpanded);
-    const [uncontrolledSelected, setUncontrolledSelected] =
-        useState(defaultSelected);
+    const [expanded, setExpanded] = useControllableState({
+        value: controlledExpanded,
+        defaultValue: defaultExpanded,
+        onChange: onExpandedChange,
+    });
 
-    const expanded = controlledExpanded ?? uncontrolledExpanded;
-    const selected = controlledSelected ?? uncontrolledSelected;
+    const [selected, select] = useControllableState<string | undefined>({
+        value: controlledSelected,
+        defaultValue: defaultSelected,
+        // `defaultSelected` is optional, so nothing may be selected yet.
+        onChange: (next) => {
+            if (next !== undefined) {
+                onSelectedChange?.(next);
+            }
+        },
+    });
 
     const toggle = (value: string) => {
-        const next = expanded.includes(value)
-            ? expanded.filter((entry) => entry !== value)
-            : [...expanded, value];
-
-        if (controlledExpanded === undefined) {
-            setUncontrolledExpanded(next);
-        }
-
-        onExpandedChange?.(next);
-    };
-
-    const select = (value: string) => {
-        if (controlledSelected === undefined) {
-            setUncontrolledSelected(value);
-        }
-
-        onSelectedChange?.(value);
+        setExpanded(
+            expanded.includes(value)
+                ? expanded.filter((entry) => entry !== value)
+                : [...expanded, value],
+        );
     };
 
     /**
