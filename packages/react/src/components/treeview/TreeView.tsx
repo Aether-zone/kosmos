@@ -249,7 +249,7 @@ export function TreeItem({
                     <IoChevronForward
                         aria-hidden="true"
                         className={[
-                            'size-3.5 shrink-0 text-muted-foreground transition-transform',
+                            'size-3.5 shrink-0 text-muted-foreground motion-safe:transition-transform',
                             isOpen ? 'rotate-90' : '',
                         ]
                             .filter(Boolean)

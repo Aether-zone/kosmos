@@ -182,6 +182,23 @@ classes it can see in source, so a variable count cannot be interpolated into
 a class name — `Text`'s `lineClamp` maps through a lookup of literal
 `line-clamp-N` classes for that reason.
 
+## Motion
+
+Animation is wrapped in Tailwind's `motion-safe:` variant, so it stops for
+anyone whose system asks for reduced motion. No animation runtime is involved
+— this is a media query, and the rules ship inside `styles.css`.
+
+Two things a media query cannot do, which components handle themselves:
+
+- **Content that moves on a timer** has to actually stop. `Carousel` reads the
+  preference through `usePrefersReducedMotion` and does not auto-advance.
+- **A spinner that freezes conveys nothing**, so it keeps turning at 2.5s
+  rather than 1s instead of stopping.
+
+An auto-playing `Carousel` also renders a pause control, which WCAG 2.2.2
+requires of anything that moves for more than five seconds. Pausing on hover
+is not enough: it does nothing on a touch screen, or for someone reading.
+
 ## Icons
 
 Icons come from the Ionicons 5 set via `react-icons/io5`, always imported from

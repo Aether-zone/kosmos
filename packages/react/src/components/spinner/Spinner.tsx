@@ -23,6 +23,7 @@ const sizeStyles: Record<SpinnerSize, string> = {
  */
 const baseStyles =
     'inline-block shrink-0 animate-spin rounded-full ' +
+    'motion-reduce:[animation-duration:2.5s] ' +
     'border-current border-t-transparent';
 
 export function Spinner({

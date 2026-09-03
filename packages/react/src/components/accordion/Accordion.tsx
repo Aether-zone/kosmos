@@ -226,7 +226,7 @@ export function AccordionTrigger({
                 <IoChevronDown
                     aria-hidden="true"
                     className={[
-                        'size-4 shrink-0 text-muted-foreground transition-transform',
+                        'size-4 shrink-0 text-muted-foreground motion-safe:transition-transform',
                         isOpen ? 'rotate-180' : '',
                     ]
                         .filter(Boolean)

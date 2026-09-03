@@ -87,9 +87,9 @@ export function Progress({
             >
                 <div
                     className={[
-                        'h-full rounded-full transition-[width] duration-300',
+                        'h-full rounded-full motion-safe:transition-[width] motion-safe:duration-300',
                         barVariants[variant],
-                        indeterminate ? 'w-2/5 animate-pulse' : '',
+                        indeterminate ? 'w-2/5 motion-safe:animate-pulse' : '',
                     ]
                         .filter(Boolean)
                         .join(' ')}

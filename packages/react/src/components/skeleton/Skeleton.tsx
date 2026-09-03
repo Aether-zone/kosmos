@@ -4,7 +4,7 @@ export interface SkeletonProps
     extends HTMLAttributes<HTMLDivElement> { }
 
 const baseStyles =
-    'animate-pulse rounded-md bg-muted';
+    'motion-safe:animate-pulse rounded-md bg-muted';
 
 export function Skeleton({
     className,

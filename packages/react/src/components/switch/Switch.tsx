@@ -20,7 +20,7 @@ const trackStyles =
 
 const thumbStyles =
     'pointer-events-none absolute left-0.5 top-0.5 size-5 rounded-full ' +
-    'bg-background shadow-sm ring-0 transition-transform ' +
+    'bg-background shadow-sm ring-0 motion-safe:transition-transform ' +
     'peer-checked:translate-x-5';
 
 export function Switch({

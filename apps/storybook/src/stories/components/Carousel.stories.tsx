@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Carousel, CarouselSlide } from '@aether-zone/kosmos';
 
@@ -124,4 +125,46 @@ function ControlledCarousel() {
 
 export const Controlled: Story = {
     render: () => <ControlledCarousel />,
+};
+
+/**
+ * Content that moves on a timer needs a way to stop it (WCAG 2.2.2). Pausing
+ * on hover is not that: it does nothing on a touch screen, or for someone who
+ * is simply reading.
+ */
+export const AutoPlayWithPauseControl: Story = {
+    args: { autoPlay: 2000 },
+    render: (args) => <Carousel {...args}>{slides}</Carousel>,
+};
+
+export const PauseControlStopsAdvancing: Story = {
+    args: { autoPlay: 300 },
+    render: (args) => <Carousel {...args}>{slides}</Carousel>,
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const selected = () =>
+            canvas
+                .getAllByRole('tab')
+                .findIndex((dot) => dot.getAttribute('aria-selected') === 'true');
+
+        const pause = canvas.getByRole('button', {
+            name: 'Pause automatic slide changes',
+        });
+
+        // It is advancing on its own.
+        await waitFor(() => expect(selected()).not.toBe(0), { timeout: 2000 });
+
+        await userEvent.click(pause);
+        await expect(
+            canvas.getByRole('button', {
+                name: 'Resume automatic slide changes',
+            }),
+        ).toBeVisible();
+
+        const stoppedAt = selected();
+
+        // And stays where it was left.
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        await expect(selected()).toBe(stoppedAt);
+    },
 };

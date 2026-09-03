@@ -10,3 +10,4 @@ export {
 export { useDismiss } from './useDismiss';
 export { focusableWithin, useFocusTrap } from './useFocusTrap';
 export { useScrollLock } from './useScrollLock';
+export { usePrefersReducedMotion } from './usePrefersReducedMotion';

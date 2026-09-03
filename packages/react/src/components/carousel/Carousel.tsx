@@ -12,7 +12,14 @@ import {
     useRef,
     useState,
 } from 'react';
-import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import {
+    IoChevronBack,
+    IoChevronForward,
+    IoPause,
+    IoPlay,
+} from 'react-icons/io5';
+
+import { usePrefersReducedMotion } from '../../internal';
 
 export interface CarouselProps
     extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
@@ -70,7 +77,9 @@ export function Carousel({
     ...props
 }: CarouselProps) {
     const [uncontrolledIndex, setUncontrolledIndex] = useState(defaultIndex);
-    const [paused, setPaused] = useState(false);
+    const [hovered, setHovered] = useState(false);
+    const [stopped, setStopped] = useState(false);
+    const reducedMotion = usePrefersReducedMotion();
     const baseId = useId();
     const viewportRef = useRef<HTMLDivElement | null>(null);
 
@@ -91,10 +100,17 @@ export function Carousel({
         onIndexChange?.(resolved);
     };
 
-    // Auto-advance pauses on hover and focus, so it never pulls a slide out
-    // from under someone reading or interacting with it.
+    /**
+     * Auto-advance stops on hover and focus so it never pulls a slide out from
+     * under someone reading, and stops outright for anyone who has asked for
+     * reduced motion — a timer is motion a media query cannot switch off.
+     * WCAG 2.2.2 also wants a control, since hovering is no use on a touch
+     * screen or to someone simply reading; `stopped` is that control.
+     */
+    const running = Boolean(autoPlay) && !stopped && !reducedMotion;
+
     useEffect(() => {
-        if (!autoPlay || paused || count <= 1) {
+        if (!running || hovered || count <= 1) {
             return;
         }
 
@@ -111,7 +127,16 @@ export function Carousel({
         }, autoPlay);
 
         return () => window.clearInterval(timer);
-    }, [autoPlay, paused, index, count, loop, controlledIndex, onIndexChange]);
+    }, [
+        running,
+        autoPlay,
+        hovered,
+        index,
+        count,
+        loop,
+        controlledIndex,
+        onIndexChange,
+    ]);
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         const next = {
@@ -137,22 +162,22 @@ export function Carousel({
                 aria-roledescription="carousel"
                 aria-label={label}
                 className={classes}
-                onMouseEnter={() => setPaused(true)}
-                onMouseLeave={() => setPaused(false)}
-                onFocusCapture={() => setPaused(true)}
-                onBlurCapture={() => setPaused(false)}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+                onFocusCapture={() => setHovered(true)}
+                onBlurCapture={() => setHovered(false)}
                 {...props}
             >
                 <div
                     ref={viewportRef}
                     // Focusable so the arrow keys have somewhere to land.
                     tabIndex={0}
-                    aria-live={autoPlay ? 'off' : 'polite'}
+                    aria-live={running ? 'off' : 'polite'}
                     className="w-full overflow-hidden rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     onKeyDown={handleKeyDown}
                 >
                     <div
-                        className="flex transition-transform duration-300 ease-out"
+                        className="flex motion-safe:transition-transform motion-safe:duration-300 ease-out"
                         style={{ transform: `translateX(-${index * 100}%)` }}
                     >
                         {slides.map((slide, position) => (
@@ -188,6 +213,26 @@ export function Carousel({
                             <IoChevronForward className="size-4" />
                         </button>
                     </>
+                ) : null}
+
+                {autoPlay && count > 1 ? (
+                    <button
+                        type="button"
+                        aria-label={
+                            running
+                                ? 'Pause automatic slide changes'
+                                : 'Resume automatic slide changes'
+                        }
+                        disabled={reducedMotion}
+                        className="absolute right-2 top-2 z-10 flex size-8 cursor-pointer items-center justify-center rounded-full border border-border bg-surface/90 text-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40"
+                        onClick={() => setStopped(!stopped)}
+                    >
+                        {running ? (
+                            <IoPause className="size-4" />
+                        ) : (
+                            <IoPlay className="size-4" />
+                        )}
+                    </button>
                 ) : null}
 
                 {showDots && count > 1 ? (
