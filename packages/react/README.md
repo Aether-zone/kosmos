@@ -40,20 +40,23 @@ contain the token values themselves, so import `@kosmos/tokens/tokens.css`
 ## Components
 
 Form controls
-: `Autocomplete`, `Checkbox`, `DatePicker`, `FileUpload`, `Form` (`Field`,
-  `FieldLabel`, `FieldDescription`, `FieldError`), `Input`, `Label`, `Otp`,
-  `Radio`/`RadioGroup`, `Select`, `Slider`, `Switch`, `Textarea`
+: `Autocomplete`, `Checkbox`, `Combobox` (multi-select with chips),
+  `DatePicker`, `FileUpload`, `Form` (`Field`, `FieldLabel`,
+  `FieldDescription`, `FieldError`), `Input`, `Label`, `Otp`,
+  `Radio`/`RadioGroup`, `Select`, `Slider`, `Switch`, `Textarea`,
+  `ToggleGroup`
 
 Actions and navigation
 : `Breadcrumbs`, `Button`, `Dropdown`, `Pagination`, `Sidenav`, `Tabs`,
   `Toolbar`
 
 Feedback and overlay
-: `Alert`, `Dialog`, `Progress`, `Skeleton`, `Spinner`, `Toast`
-  (`ToastProvider`, `useToast`), `Tooltip`
+: `Alert`, `AlertDialog`, `Dialog`, `Drawer`, `Popover`, `Progress`,
+  `Skeleton`, `Spinner`, `Toast` (`ToastProvider`, `useToast`), `Tooltip`
 
 Content
-: `Accordion`, `Avatar`, `Badge`, `Card`, `EmptyState`, `Separator`, `Table`
+: `Accordion`, `Avatar`, `Badge`, `Card`, `Chip`, `EmptyState`, `Separator`,
+  `Table`
 
 Every component and its props are documented in Storybook.
 
@@ -92,9 +95,23 @@ The trade-off portalling brings is that the panel leaves its DOM subtree, so
 "click outside" has to consider two detached trees; `useDismiss` takes a list
 of refs for exactly that reason.
 
-Modal surfaces additionally use `useFocusTrap` and `useScrollLock`.
-`aria-modal="true"` asserts the rest of the page is inert, and those two
-hooks are what make the assertion true.
+Modal surfaces go through `ModalOverlay`, which bundles the portal, backdrop,
+focus trap, scroll lock and Escape handling. `Dialog`, `Drawer` and
+`AlertDialog` all share it: `aria-modal="true"` asserts the rest of the page
+is inert, and a modal that lets focus or scrolling escape is lying about that,
+so it is worth having exactly one implementation of.
+
+Which overlay to reach for:
+
+| | Portalled | Focus trapped | Page behind |
+| --- | --- | --- | --- |
+| `Tooltip`, `Dropdown`, `Popover` | yes | no | live |
+| `Dialog`, `Drawer` | yes | yes | inert |
+| `AlertDialog` | yes | yes | inert, and the backdrop does not dismiss |
+
+`AlertDialog` refuses backdrop dismissal and puts initial focus on the cancel
+action, so neither a stray click nor a reflexive Enter can confirm something
+destructive.
 
 ## Icons
 

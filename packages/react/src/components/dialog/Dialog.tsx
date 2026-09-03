@@ -3,13 +3,10 @@ import {
     type HTMLAttributes,
     type ReactNode,
     useContext,
-    useEffect,
-    useRef,
     useState,
 } from 'react';
-import { createPortal } from 'react-dom';
 
-import { useFocusTrap, useScrollLock } from '../../internal';
+import { ModalOverlay } from '../../internal';
 
 export interface DialogProps {
     open?: boolean;
@@ -22,7 +19,8 @@ export interface DialogTriggerProps
     extends HTMLAttributes<HTMLButtonElement> { }
 
 export interface DialogContentProps
-    extends HTMLAttributes<HTMLDivElement> { }
+    // `role` is fixed: this surface is always a dialog.
+    extends Omit<HTMLAttributes<HTMLDivElement>, 'role'> { }
 
 export interface DialogHeaderProps
     extends HTMLAttributes<HTMLDivElement> { }
@@ -110,65 +108,25 @@ export function DialogContent({
     ...props
 }: DialogContentProps) {
     const { open, setOpen } = useDialog();
-    const panelRef = useRef<HTMLDivElement | null>(null);
-
-    // `aria-modal` claims the rest of the page is inert. These make it true.
-    useFocusTrap(panelRef, open);
-    useScrollLock(open);
-
-    useEffect(() => {
-        if (!open) {
-            return;
-        }
-
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                setOpen(false);
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [open]);
-
-    if (!open) {
-        return null;
-    }
 
     const classes = [
-        'fixed inset-0 z-50 flex items-center justify-center p-4',
+        'fixed inset-0 flex items-center justify-center p-4',
         className,
     ]
         .filter(Boolean)
         .join(' ');
 
-    return createPortal(
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            role="presentation"
+    return (
+        <ModalOverlay
+            open={open}
+            onDismiss={() => setOpen(false)}
+            className={classes}
+            {...props}
         >
-            <div
-                className="absolute inset-0 bg-black/50"
-                onClick={() => setOpen(false)}
-            />
-
-            <div
-                ref={panelRef}
-                role="dialog"
-                aria-modal="true"
-                tabIndex={-1}
-                className={classes}
-                {...props}
-            >
-                <div className="w-full max-w-lg rounded-lg border border-border bg-surface p-6 shadow-lg">
-                    {children}
-                </div>
+            <div className="w-full max-w-lg rounded-lg border border-border bg-surface p-6 shadow-lg">
+                {children}
             </div>
-        </div>,
-        document.body,
+        </ModalOverlay>
     );
 }
 

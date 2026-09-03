@@ -1,3 +1,4 @@
+export { ModalOverlay, type ModalOverlayProps } from './ModalOverlay';
 export { OverlayPanel, type OverlayPanelProps } from './OverlayPanel';
 export {
     useAnchoredPosition,
