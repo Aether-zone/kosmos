@@ -88,7 +88,7 @@ Form controls
   `ToggleGroup`
 
 Actions and navigation
-: `Breadcrumbs`, `Button`, `Command` (inline or modal palette),
+: `AppBar`, `Breadcrumbs`, `Button`, `Command` (inline or modal palette),
   `ContextMenu`, `Dropdown`, `Menubar`, `Pagination`, `Sidenav`, `Tabs`,
   `Toolbar`, `TreeView`
 
