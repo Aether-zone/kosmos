@@ -2,7 +2,6 @@ import {
     type InputHTMLAttributes,
     type KeyboardEvent,
     type ReactNode,
-    useEffect,
     useId,
     useMemo,
     useRef,
@@ -70,7 +69,7 @@ export function Autocomplete({
 }: AutocompleteProps) {
     const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
     const [open, setOpen] = useState(false);
-    const [activeIndex, setActiveIndex] = useState(-1);
+    const [highlighted, setActiveIndex] = useState(-1);
 
     const listId = useId();
     const rootRef = useRef<HTMLDivElement | null>(null);
@@ -83,12 +82,10 @@ export function Autocomplete({
         [options, value, filter],
     );
 
-    // A stale highlight would let Enter pick a row that is no longer shown.
-    useEffect(() => {
-        setActiveIndex((current) =>
-            current >= matches.length ? matches.length - 1 : current,
-        );
-    }, [matches.length]);
+    // Derived rather than clamped in an effect: filtering can shrink the list
+    // under a highlight, and a stale one would let Enter pick a row that is no
+    // longer shown.
+    const activeIndex = Math.min(highlighted, matches.length - 1);
 
     // The list is portalled, so "inside" spans two detached subtrees.
     useDismiss({

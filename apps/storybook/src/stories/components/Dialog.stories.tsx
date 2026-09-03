@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
     Button,
@@ -145,4 +146,37 @@ export const DefaultOpen: Story = {
             </DialogContent>
         </Dialog>
     ),
+};
+
+/**
+ * `aria-modal="true"` asserts the rest of the page is inert, so focus must be
+ * trapped and the background must not scroll. Both were missing.
+ */
+export const TrapsFocusAndLocksScroll: Story = {
+    render: Default.render,
+    play: async ({ canvasElement }) => {
+        const trigger = within(canvasElement).getByRole('button');
+
+        await userEvent.click(trigger);
+
+        const dialog = await within(document.body).findByRole('dialog');
+
+        await waitFor(() => expect(dialog.contains(document.activeElement)).toBe(true));
+        await expect(document.body.style.overflow).toBe('hidden');
+
+        // Tab repeatedly: focus must never leave the dialog.
+        for (let i = 0; i < 8; i += 1) {
+            await userEvent.tab();
+            await expect(dialog.contains(document.activeElement)).toBe(true);
+        }
+
+        await userEvent.keyboard('{Escape}');
+
+        await waitFor(() =>
+            expect(document.body.querySelector('[role="dialog"]')).toBeNull(),
+        );
+        // The lock and the caller's focus are both restored.
+        await expect(document.body.style.overflow).toBe('');
+        await expect(trigger).toHaveFocus();
+    },
 };

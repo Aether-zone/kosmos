@@ -66,7 +66,7 @@ const body = (
 export const Default: Story = {
     render: () => (
         <Drawer>
-            <DrawerTrigger>
+            <DrawerTrigger asChild>
                 <Button>Open drawer</Button>
             </DrawerTrigger>
 
@@ -78,7 +78,7 @@ export const Default: Story = {
 export const FromLeft: Story = {
     render: () => (
         <Drawer defaultOpen>
-            <DrawerTrigger>
+            <DrawerTrigger asChild>
                 <Button>Open drawer</Button>
             </DrawerTrigger>
 
@@ -90,7 +90,7 @@ export const FromLeft: Story = {
 export const FromTop: Story = {
     render: () => (
         <Drawer defaultOpen>
-            <DrawerTrigger>
+            <DrawerTrigger asChild>
                 <Button>Open drawer</Button>
             </DrawerTrigger>
 
@@ -102,7 +102,7 @@ export const FromTop: Story = {
 export const FromBottom: Story = {
     render: () => (
         <Drawer defaultOpen>
-            <DrawerTrigger>
+            <DrawerTrigger asChild>
                 <Button>Open drawer</Button>
             </DrawerTrigger>
 
@@ -114,7 +114,7 @@ export const FromBottom: Story = {
 export const Small: Story = {
     render: () => (
         <Drawer defaultOpen>
-            <DrawerTrigger>
+            <DrawerTrigger asChild>
                 <Button>Open drawer</Button>
             </DrawerTrigger>
 
@@ -126,7 +126,7 @@ export const Small: Story = {
 export const Large: Story = {
     render: () => (
         <Drawer defaultOpen>
-            <DrawerTrigger>
+            <DrawerTrigger asChild>
                 <Button>Open drawer</Button>
             </DrawerTrigger>
 
@@ -138,7 +138,7 @@ export const Large: Story = {
 export const DefaultOpen: Story = {
     render: () => (
         <Drawer defaultOpen>
-            <DrawerTrigger>
+            <DrawerTrigger asChild>
                 <Button>Open drawer</Button>
             </DrawerTrigger>
 

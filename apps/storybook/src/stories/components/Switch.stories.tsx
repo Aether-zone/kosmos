@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { Switch } from '@aether-zone/kosmos';
 
@@ -83,4 +84,37 @@ export const States: Story = {
             </label>
         </div>
     ),
+};
+
+/**
+ * Regression: the thumb was a sibling carrying `checked:`, which only applies
+ * to the `:checked` element itself, so it never moved.
+ */
+export const ThumbMovesWhenChecked: Story = {
+    args: { defaultChecked: true },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const input = canvas.getByRole('switch');
+        const thumb = canvasElement.querySelector('span[aria-hidden="true"]')!;
+
+        await expect(input).toBeChecked();
+
+        // Tailwind v4 uses the `translate` property, not `transform`.
+        // translate-x-5 is 1.25rem, so 20px.
+        await expect(getComputedStyle(thumb).translate).toContain('20px');
+    },
+};
+
+/**
+ * Regression: competing Tailwind utilities resolve by stylesheet order, not
+ * class-string order, so a base `border-transparent` hid the error state.
+ */
+export const ErrorBorderIsVisible: Story = {
+    args: { error: true },
+    play: async ({ canvasElement }) => {
+        const input = within(canvasElement).getByRole('switch');
+
+        // --kosmos-color-destructive, red-600.
+        await expect(getComputedStyle(input).borderColor).toBe('rgb(220, 38, 38)');
+    },
 };

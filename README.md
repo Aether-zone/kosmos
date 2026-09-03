@@ -34,10 +34,14 @@ unstyled stories.
 | `pnpm --filter storybook storybook` | Storybook dev server. |
 | `pnpm --filter storybook build-storybook` | Static Storybook build. |
 | `pnpm --filter storybook lint` | Lints the Storybook app with oxlint. |
-| `pnpm --filter storybook exec vitest run` | Renders every story in headless Chromium. |
+| `pnpm test` | Renders every story in headless Chromium, including the `play` functions that guard past regressions. |
+| `pnpm lint` | `oxlint --deny-warnings` across the workspace. |
 
 Run a single story file with
 `pnpm --filter storybook exec vitest run src/stories/components/Button.stories.tsx`.
+
+CI runs exactly these: `.github/workflows/ci.yml` builds, typechecks, lints and
+tests on every push to `main` and every pull request.
 
 ## How theming works
 

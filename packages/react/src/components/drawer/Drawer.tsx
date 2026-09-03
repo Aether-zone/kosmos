@@ -2,13 +2,14 @@ import {
     createContext,
     type HTMLAttributes,
     type ButtonHTMLAttributes,
+    type MouseEvent,
     type ReactNode,
     useContext,
     useState,
 } from 'react';
 import { IoClose } from 'react-icons/io5';
 
-import { ModalOverlay } from '../../internal';
+import { ModalOverlay, Slot } from '../../internal';
 
 export type DrawerSide = 'left' | 'right' | 'top' | 'bottom';
 export type DrawerSize = 'sm' | 'md' | 'lg' | 'full';
@@ -21,7 +22,10 @@ export interface DrawerProps {
 }
 
 export interface DrawerTriggerProps
-    extends ButtonHTMLAttributes<HTMLButtonElement> { }
+    extends ButtonHTMLAttributes<HTMLButtonElement> {
+    /** Render the child as the trigger instead of wrapping it in a button. */
+    asChild?: boolean;
+}
 
 export interface DrawerContentProps
     extends Omit<HTMLAttributes<HTMLDivElement>, 'role'> {
@@ -87,11 +91,21 @@ export function Drawer({
 }
 
 export function DrawerTrigger({
+    asChild = false,
     className,
     onClick,
     ...props
 }: DrawerTriggerProps) {
     const { setOpen } = useDrawer();
+
+    const handleClick = (event: MouseEvent<HTMLElement>) => {
+        onClick?.(event as MouseEvent<HTMLButtonElement>);
+        setOpen(true);
+    };
+
+    if (asChild) {
+        return <Slot className={className} onClick={handleClick} {...props} />;
+    }
 
     const classes = ['cursor-pointer', className].filter(Boolean).join(' ');
 
@@ -99,10 +113,7 @@ export function DrawerTrigger({
         <button
             type="button"
             className={classes}
-            onClick={(event) => {
-                onClick?.(event);
-                setOpen(true);
-            }}
+            onClick={handleClick}
             {...props}
         />
     );

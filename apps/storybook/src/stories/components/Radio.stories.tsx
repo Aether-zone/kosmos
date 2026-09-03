@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { Radio, RadioGroup } from '@aether-zone/kosmos';
 
@@ -136,4 +137,21 @@ function ControlledRadioGroup() {
 
 export const Controlled: Story = {
     render: () => <ControlledRadioGroup />,
+};
+
+/** Built on native inputs, so the arrow keys come from the platform. */
+export const ArrowKeysMoveSelection: Story = {
+    args: { defaultValue: 'free', children: plans },
+    play: async ({ canvasElement }) => {
+        const radios = within(canvasElement).getAllByRole(
+            'radio',
+        ) as HTMLInputElement[];
+
+        radios[0].focus();
+        await expect(radios[0]).toBeChecked();
+
+        await userEvent.keyboard('{ArrowDown}');
+        await expect(radios[1]).toBeChecked();
+        await expect(radios[0]).not.toBeChecked();
+    },
 };

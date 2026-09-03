@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import {
     Alert,
@@ -126,4 +127,32 @@ export const AllVariants: Story = {
             </Alert>
         </div>
     ),
+};
+
+/**
+ * Regression: the tinted variants used `text-*-foreground`, which is the
+ * colour for a *solid* fill — white for success and destructive — leaving the
+ * title invisible on a 10% tint.
+ */
+export const TintedVariantsKeepReadableText: Story = {
+    render: () => (
+        <div className="flex w-96 flex-col gap-3">
+            <Alert variant="success">
+                <AlertTitle>Success</AlertTitle>
+            </Alert>
+            <Alert variant="destructive">
+                <AlertTitle>Error</AlertTitle>
+            </Alert>
+        </div>
+    ),
+    play: async ({ canvasElement }) => {
+        const titles = within(canvasElement).getAllByRole('alert');
+
+        for (const alert of titles) {
+            const title = alert.querySelector('h5')!;
+
+            // --kosmos-color-foreground in the light theme, never white.
+            await expect(getComputedStyle(title).color).toBe('rgb(23, 23, 23)');
+        }
+    },
 };

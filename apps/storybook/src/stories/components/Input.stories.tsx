@@ -58,13 +58,13 @@ export const Error: Story = {
 export const Disabled: Story = {
     args: {
         disabled: true,
-        value: 'Disabled input',
+        defaultValue: 'Disabled input',
     },
 };
 
 export const WithValue: Story = {
     args: {
-        value: 'Hello, Kosmos',
+        defaultValue: 'Hello, Kosmos',
     },
 };
 

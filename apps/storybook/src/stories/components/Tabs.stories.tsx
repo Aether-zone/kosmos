@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
     Tabs,
@@ -207,4 +208,32 @@ function ControlledTabs() {
 
 export const Controlled: Story = {
     render: () => <ControlledTabs />,
+};
+
+/**
+ * Regression: only the selected tab is in the tab order, so without an arrow
+ * handler the others could not be reached by keyboard at all.
+ */
+export const ArrowKeysReachEveryTab: Story = {
+    render: Default.render,
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const [first, second] = canvas.getAllByRole('tab');
+
+        first.focus();
+        await expect(first).toHaveAttribute('aria-selected', 'true');
+        await expect(second).toHaveAttribute('tabindex', '-1');
+
+        await userEvent.keyboard('{ArrowRight}');
+        await expect(second).toHaveAttribute('aria-selected', 'true');
+
+        await userEvent.keyboard('{Home}');
+        await expect(first).toHaveAttribute('aria-selected', 'true');
+
+        // The panel must follow the selection.
+        await expect(canvas.getByRole('tabpanel')).toHaveAttribute(
+            'aria-labelledby',
+            first.id,
+        );
+    },
 };

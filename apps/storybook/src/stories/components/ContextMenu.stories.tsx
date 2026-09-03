@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
     IoCopyOutline,
     IoCutOutline,
@@ -95,4 +96,32 @@ export const WithDisabledItem: Story = {
             </ContextMenuContent>
         </ContextMenu>
     ),
+};
+
+/**
+ * Regression: focus never entered the menu, so its arrow keys and Escape did
+ * nothing. The browser settles focus on <body> while handling the opening
+ * click, after React's effects have run, so the move has to be deferred.
+ */
+export const OpensAtCursorAndTakesFocus: Story = {
+    render: Default.render,
+    play: async ({ canvasElement }) => {
+        const trigger = canvasElement.firstElementChild as HTMLElement;
+
+        await userEvent.pointer({ target: trigger, keys: '[MouseRight]' });
+
+        const menu = await within(document.body).findByRole('menu');
+        const items = within(menu).getAllByRole('menuitem');
+
+        await expect(menu.parentElement).toBe(document.body);
+
+        // Focus is deferred a frame past the opening click; see the component.
+        await waitFor(() => expect(items[0]).toHaveFocus());
+
+        await userEvent.keyboard('{ArrowDown}');
+        await expect(items[1]).toHaveFocus();
+
+        await userEvent.keyboard('{Escape}');
+        await expect(document.body.querySelector('[role="menu"]')).toBeNull();
+    },
 };

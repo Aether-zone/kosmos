@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
     Button,
@@ -102,4 +103,36 @@ export const KeyboardFocus: Story = {
             </Tooltip>
         </div>
     ),
+};
+
+/**
+ * Regression: the content was `absolute` with no positioned ancestor, so it
+ * landed hundreds of pixels from its trigger. It is portalled now, and
+ * positioned by measurement.
+ */
+export const PositionedAgainstTrigger: Story = {
+    render: Default.render,
+    play: async ({ canvasElement }) => {
+        const trigger = canvasElement.querySelector('[tabindex="0"]')!;
+
+        await userEvent.hover(trigger);
+
+        const tooltip = await within(document.body).findByRole('tooltip');
+
+        await expect(tooltip.parentElement).toBe(document.body);
+        await expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
+
+        const trigRect = trigger.getBoundingClientRect();
+        const tipRect = tooltip.getBoundingClientRect();
+
+        // Directly below the trigger, and horizontally centred on it.
+        await expect(tipRect.top).toBeGreaterThan(trigRect.bottom - 1);
+        await expect(tipRect.top - trigRect.bottom).toBeLessThan(24);
+        await expect(
+            Math.abs(
+                tipRect.left + tipRect.width / 2 -
+                    (trigRect.left + trigRect.width / 2),
+            ),
+        ).toBeLessThan(2);
+    },
 };

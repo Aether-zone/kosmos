@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
     Dropdown,
@@ -121,4 +122,36 @@ export const InsideOverflowContainer: Story = {
             </Dropdown>
         </div>
     ),
+};
+
+/**
+ * The menu is portalled, so "inside" spans two detached trees — closing on an
+ * outside press has to account for both.
+ */
+export const KeyboardNavigation: Story = {
+    render: Default.render,
+    play: async ({ canvasElement }) => {
+        const trigger = within(canvasElement).getByRole('button');
+
+        trigger.focus();
+        await userEvent.keyboard('{ArrowDown}');
+
+        const menu = await within(document.body).findByRole('menu');
+        await expect(menu.parentElement).toBe(document.body);
+
+        const items = within(menu).getAllByRole('menuitem');
+
+        // Focus moves a frame after the portal mounts.
+        await waitFor(() => expect(items[0]).toHaveFocus());
+
+        await userEvent.keyboard('{ArrowDown}');
+        await expect(items[1]).toHaveFocus();
+
+        await userEvent.keyboard('{End}');
+        await expect(items[items.length - 1]).toHaveFocus();
+
+        await userEvent.keyboard('{Escape}');
+        await expect(document.body.querySelector('[role="menu"]')).toBeNull();
+        await expect(trigger).toHaveFocus();
+    },
 };

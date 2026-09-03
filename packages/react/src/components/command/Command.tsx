@@ -98,13 +98,19 @@ export function Command({
 
     const modal = open !== undefined;
 
-    // Reopening should not inherit the previous search.
-    useEffect(() => {
-        if (modal && open) {
+    // Reopening should not inherit the previous search. Adjusted during
+    // render rather than in an effect, which would render once with the stale
+    // query before clearing it.
+    const [wasOpen, setWasOpen] = useState(open);
+
+    if (open !== wasOpen) {
+        setWasOpen(open);
+
+        if (open) {
             setQuery('');
             setActiveId(null);
         }
-    }, [modal, open]);
+    }
 
     const matches = useMemo(() => {
         const trimmed = query.trim().toLowerCase();

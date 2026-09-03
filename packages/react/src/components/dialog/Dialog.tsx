@@ -1,12 +1,13 @@
 import {
     createContext,
     type HTMLAttributes,
+    type MouseEvent,
     type ReactNode,
     useContext,
     useState,
 } from 'react';
 
-import { ModalOverlay } from '../../internal';
+import { ModalOverlay, Slot } from '../../internal';
 
 export interface DialogProps {
     open?: boolean;
@@ -16,7 +17,10 @@ export interface DialogProps {
 }
 
 export interface DialogTriggerProps
-    extends HTMLAttributes<HTMLButtonElement> { }
+    extends HTMLAttributes<HTMLButtonElement> {
+    /** Render the child as the trigger instead of wrapping it in a button. */
+    asChild?: boolean;
+}
 
 export interface DialogContentProps
     // `role` is fixed: this surface is always a dialog.
@@ -79,11 +83,21 @@ export function Dialog({
 }
 
 export function DialogTrigger({
+    asChild = false,
     className,
     onClick,
     ...props
 }: DialogTriggerProps) {
     const { setOpen } = useDialog();
+
+    const handleClick = (event: MouseEvent<HTMLElement>) => {
+        onClick?.(event as MouseEvent<HTMLButtonElement>);
+        setOpen(true);
+    };
+
+    if (asChild) {
+        return <Slot className={className} onClick={handleClick} {...props} />;
+    }
 
     const classes = ['cursor-pointer', className]
         .filter(Boolean)
@@ -93,10 +107,7 @@ export function DialogTrigger({
         <button
             type="button"
             className={classes}
-            onClick={(event) => {
-                onClick?.(event);
-                setOpen(true);
-            }}
+            onClick={handleClick}
             {...props}
         />
     );

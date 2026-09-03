@@ -1,7 +1,6 @@
 import {
     type KeyboardEvent,
     type ReactNode,
-    useEffect,
     useId,
     useMemo,
     useRef,
@@ -83,7 +82,7 @@ export function Combobox({
     const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
     const [query, setQuery] = useState('');
     const [open, setOpen] = useState(false);
-    const [activeIndex, setActiveIndex] = useState(-1);
+    const [highlighted, setActiveIndex] = useState(-1);
     const [created, setCreated] = useState<ComboboxOption[]>([]);
 
     const generatedId = useId();
@@ -135,10 +134,10 @@ export function Combobox({
 
     const rows = canCreate ? matches.length + 1 : matches.length;
 
-    // A stale highlight would let Enter pick a row that is no longer shown.
-    useEffect(() => {
-        setActiveIndex((current) => (current >= rows ? rows - 1 : current));
-    }, [rows]);
+    // Derived rather than clamped in an effect: filtering can shrink the list
+    // under a highlight, and a stale one would let Enter pick a row that is no
+    // longer shown.
+    const activeIndex = Math.min(highlighted, rows - 1);
 
     useDismiss({
         enabled: open,

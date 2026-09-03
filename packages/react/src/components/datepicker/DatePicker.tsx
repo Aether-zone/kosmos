@@ -1,7 +1,6 @@
 import {
     type ButtonHTMLAttributes,
     type HTMLAttributes,
-    useEffect,
     useId,
     useMemo,
     useRef,
@@ -117,11 +116,17 @@ export function DatePicker({
     const calendarRef = useRef<HTMLDivElement | null>(null);
 
     // Reopening after the value changed should show the selected month.
-    useEffect(() => {
+    // Adjusted during render, so the calendar never paints the old month
+    // first — and so `selected` can be read without going stale.
+    const [wasOpen, setWasOpen] = useState(open);
+
+    if (open !== wasOpen) {
+        setWasOpen(open);
+
         if (open && selected) {
             setMonth(startOfMonth(selected));
         }
-    }, [open]);
+    }
 
     // The calendar is portalled, so "inside" spans two detached subtrees.
     useDismiss({

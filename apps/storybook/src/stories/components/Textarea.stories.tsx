@@ -58,13 +58,13 @@ export const Error: Story = {
 export const Disabled: Story = {
     args: {
         disabled: true,
-        value: 'This textarea is disabled.',
+        defaultValue: 'This textarea is disabled.',
     },
 };
 
 export const WithValue: Story = {
     args: {
-        value:
+        defaultValue:
             'This is an example of a textarea with some existing content.',
     },
 };

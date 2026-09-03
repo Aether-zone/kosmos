@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
     Accordion,
@@ -135,4 +136,28 @@ function ControlledAccordion() {
 
 export const Controlled: Story = {
     render: () => <ControlledAccordion />,
+};
+
+/** Single mode closes the open item when another opens. */
+export const SingleModeClosesPrevious: Story = {
+    args: { defaultValue: ['shipping'], children: items },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const triggers = canvas.getAllByRole('button');
+
+        await expect(triggers[0]).toHaveAttribute('aria-expanded', 'true');
+
+        await userEvent.click(triggers[1]);
+
+        await waitFor(() =>
+            expect(triggers[1]).toHaveAttribute('aria-expanded', 'true'),
+        );
+        await expect(triggers[0]).toHaveAttribute('aria-expanded', 'false');
+        await expect(canvas.getAllByRole('region')).toHaveLength(1);
+
+        // Arrow keys move between headers.
+        triggers[0].focus();
+        await userEvent.keyboard('{ArrowDown}');
+        await expect(triggers[1]).toHaveFocus();
+    },
 };

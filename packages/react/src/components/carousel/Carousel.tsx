@@ -3,7 +3,6 @@ import {
     createContext,
     type HTMLAttributes,
     type KeyboardEvent,
-    type ReactNode,
     useContext,
     useEffect,
     useId,
@@ -97,11 +96,19 @@ export function Carousel({
         }
 
         const timer = window.setInterval(() => {
-            go(index + 1);
+            const next = loop
+                ? (index + 1) % count
+                : Math.min(index + 1, count - 1);
+
+            if (controlledIndex === undefined) {
+                setUncontrolledIndex(next);
+            }
+
+            onIndexChange?.(next);
         }, autoPlay);
 
         return () => window.clearInterval(timer);
-    }, [autoPlay, paused, index, count, loop]);
+    }, [autoPlay, paused, index, count, loop, controlledIndex, onIndexChange]);
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         const next = {

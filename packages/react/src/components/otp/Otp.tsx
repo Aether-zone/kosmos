@@ -64,18 +64,16 @@ export function Otp({
 
     const value = (controlledValue ?? uncontrolledValue).slice(0, length);
 
-    // `commit` is followed synchronously by a focus move, before React has
-    // re-rendered, so handlers that run in between would otherwise read the
-    // previous value out of the render closure.
-    const valueRef = useRef(value);
-    valueRef.current = value;
+    // `focusSlot` moves focus from an event handler, and the resulting focus
+    // event fires before React re-renders — so the guard below would read a
+    // stale `value`. Flagging programmatic moves is cheaper than tracking the
+    // value in a ref, and keeps render free of ref writes.
+    const programmatic = useRef(false);
 
     const sanitize = (input: string) =>
         input.replace(PATTERNS[type], '').slice(0, length);
 
     const commit = (nextValue: string) => {
-        valueRef.current = nextValue;
-
         if (controlledValue === undefined) {
             setUncontrolledValue(nextValue);
         }
@@ -90,6 +88,7 @@ export function Otp({
     const focusSlot = (index: number) => {
         const clamped = Math.max(0, Math.min(index, length - 1));
 
+        programmatic.current = true;
         inputsRef.current[clamped]?.focus();
         inputsRef.current[clamped]?.select();
     };
@@ -224,10 +223,16 @@ export function Otp({
                     onKeyDown={(event) => handleKeyDown(index, event)}
                     onPaste={(event) => handlePaste(index, event)}
                     onFocus={(event) => {
+                        if (programmatic.current) {
+                            programmatic.current = false;
+                            event.target.select();
+                            return;
+                        }
+
                         // Clicking past the end would strand the caret in a
                         // slot that cannot be filled yet.
-                        if (index > valueRef.current.length) {
-                            focusSlot(valueRef.current.length);
+                        if (index > value.length) {
+                            focusSlot(value.length);
                             return;
                         }
 

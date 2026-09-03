@@ -179,16 +179,27 @@ export function DropdownMenu({
     const { open, setOpen, menuId, triggerRef, rootRef, menuRef } =
         useDropdown();
 
-    // Opening with the keyboard should land on the first item; opening with
-    // the mouse should not steal focus from the page.
+    /**
+     * Opening from the trigger should land on the first item. Deferred a
+     * frame, like ContextMenu and Menubar: the panel is portalled, and
+     * reaching into it during the passive effect that follows the opening
+     * render is not reliable.
+     */
     useEffect(() => {
-        if (!open || !menuRef.current) {
+        if (!open) {
             return;
         }
 
-        if (document.activeElement === triggerRef.current) {
-            itemsOf(menuRef.current)[0]?.focus();
-        }
+        const openedFromTrigger =
+            document.activeElement === triggerRef.current;
+
+        const frame = requestAnimationFrame(() => {
+            if (openedFromTrigger && menuRef.current) {
+                itemsOf(menuRef.current)[0]?.focus();
+            }
+        });
+
+        return () => cancelAnimationFrame(frame);
     }, [open, menuRef, triggerRef]);
 
     const classes = [menuStyles, className].filter(Boolean).join(' ');

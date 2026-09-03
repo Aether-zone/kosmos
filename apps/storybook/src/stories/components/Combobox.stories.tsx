@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Combobox } from '@aether-zone/kosmos';
 
@@ -130,4 +131,25 @@ function ControlledCombobox() {
 
 export const Controlled: Story = {
     render: () => <ControlledCombobox />,
+};
+
+/** Backspace on an empty input removes the last chip, as a tag field should. */
+export const BackspaceRemovesLastChip: Story = {
+    args: { defaultValue: ['typescript', 'react'] },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const input = canvas.getByRole('combobox');
+
+        const chips = () =>
+            [...canvasElement.querySelectorAll('button[aria-label^="Remove"]')]
+                .map((button) => button.getAttribute('aria-label'));
+
+        await expect(chips()).toHaveLength(2);
+
+        input.focus();
+        await userEvent.keyboard('{Backspace}');
+
+        await waitFor(() => expect(chips()).toHaveLength(1));
+        await expect(chips()[0]).toContain('TypeScript');
+    },
 };

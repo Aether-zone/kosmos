@@ -20,8 +20,8 @@
     "scripts": {
         "build": "tsup && node build-styles.mjs && tailwindcss -i src/tailwind.css -o dist/styles.css --minify",
         "dev": "tsup --watch",
-        "lint": "eslint .",
-        "test": "vitest run",
+        "lint": "oxlint --deny-warnings",
+        "test": "vitest run --passWithNoTests",
         "typecheck": "tsc --noEmit"
     },
     "peerDependencies": {
@@ -36,6 +36,7 @@
         "@tailwindcss/cli": "^4.3.3",
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
+        "oxlint": "^1.79.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "tailwindcss": "^4.3.3",
