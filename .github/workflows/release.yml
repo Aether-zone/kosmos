@@ -18,8 +18,6 @@ jobs:
       contents: write
       # Opening the Version Packages pull request.
       pull-requests: write
-      # Pushing to the GitHub Packages registry.
-      packages: write
 
     steps:
       - uses: actions/checkout@v7
@@ -35,7 +33,7 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          registry-url: https://npm.pkg.github.com
+          registry-url: https://registry.npmjs.org
           scope: '@aether-zone'
 
       - name: Install dependencies
@@ -58,5 +56,9 @@ jobs:
           commit: 'Version packages'
           title: 'Version packages'
         env:
+          # Two different credentials doing two different jobs: GITHUB_TOKEN
+          # opens and updates the Version packages pull request, NPM_TOKEN
+          # publishes. Before the move to npm both were the same token, which
+          # made it easy to read as one thing.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
