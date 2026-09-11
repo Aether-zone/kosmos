@@ -1,13 +1,19 @@
 import {
+    Children,
     createContext,
     type HTMLAttributes,
     type KeyboardEvent,
     type ReactNode,
+    useCallback,
     useContext,
+    useEffect,
+    useRef,
+    useState,
 } from 'react';
 
 import { useControllableState } from '../../hooks';
-import { IoChevronForward } from 'react-icons/io5';
+import { Spinner } from '../spinner';
+import { IoAlertCircleOutline, IoChevronForward } from 'react-icons/io5';
 
 export interface TreeViewProps
     extends Omit<HTMLAttributes<HTMLUListElement>, 'onSelect' | 'defaultValue'> {
@@ -18,6 +24,15 @@ export interface TreeViewProps
     defaultSelected?: string;
     onSelectedChange?: (value: string) => void;
     label?: string;
+    /**
+     * Announced on a branch while `loadChildren` is in flight. Not shown —
+     * the visible signal is the spinner that replaces the chevron.
+     */
+    loadingLabel?: string;
+    /** Shown in the row that replaces a branch whose `loadChildren` rejected. */
+    errorLabel?: string;
+    /** Labels the button that retries a failed `loadChildren`. */
+    retryLabel?: string;
 }
 
 export interface TreeItemProps
@@ -27,13 +42,32 @@ export interface TreeItemProps
     icon?: ReactNode;
     disabled?: boolean;
     onSelect?: () => void;
+    /**
+     * Fetches this branch's children the first time it is expanded. Supplying
+     * it marks the item as a branch, so the chevron is there to click before
+     * anything is known about what is underneath.
+     *
+     * Static `children` win: pass one or the other, not both.
+     */
+    loadChildren?: () => Promise<ReactNode>;
 }
+
+type BranchLoad =
+    | { status: 'loading' }
+    | { status: 'loaded'; nodes: ReactNode }
+    | { status: 'error' };
 
 interface TreeContextValue {
     expanded: string[];
     toggle: (value: string) => void;
     selected?: string;
     select: (value: string) => void;
+    branches: Record<string, BranchLoad>;
+    load: (value: string, loader: () => Promise<ReactNode>) => void;
+    retry: (value: string, loader: () => Promise<ReactNode>) => void;
+    loadingLabel: string;
+    errorLabel: string;
+    retryLabel: string;
 }
 
 const TreeContext = createContext<TreeContextValue | null>(null);
@@ -56,6 +90,10 @@ const visibleItems = (tree: HTMLElement) => [
     ),
 ];
 
+/** Rows are indented by depth rather than by nesting padding, so the whole
+ * row stays clickable across the full width. */
+const indent = (depth: number) => `${(depth - 1) * 16 + 4}px`;
+
 export function TreeView({
     expanded: controlledExpanded,
     defaultExpanded = [],
@@ -64,6 +102,9 @@ export function TreeView({
     defaultSelected,
     onSelectedChange,
     label = 'Tree',
+    loadingLabel = 'Loading…',
+    errorLabel = 'Could not load',
+    retryLabel = 'Retry',
     className,
     onKeyDown,
     children,
@@ -85,6 +126,67 @@ export function TreeView({
             }
         },
     });
+
+    /**
+     * Lazily loaded children are held here rather than in the branch that
+     * asked for them, because a TreeItem unmounts as soon as an *ancestor*
+     * collapses. Keeping the cache at the root means reopening a grandparent
+     * shows what was already fetched instead of fetching it again.
+     */
+    const [branches, setBranches] = useState<Record<string, BranchLoad>>({});
+
+    /**
+     * Which branches have already asked. A ref, not derived from `branches`,
+     * so the guard is read at call time: TreeItem's effect re-runs whenever an
+     * inline `loadChildren` arrow changes identity, which is every render.
+     */
+    const requested = useRef(new Set<string>());
+
+    const start = useCallback(
+        (value: string, loader: () => Promise<ReactNode>) => {
+            setBranches((previous) => ({
+                ...previous,
+                [value]: { status: 'loading' },
+            }));
+
+            loader().then(
+                (nodes) =>
+                    setBranches((previous) => ({
+                        ...previous,
+                        [value]: { status: 'loaded', nodes },
+                    })),
+                () =>
+                    setBranches((previous) => ({
+                        ...previous,
+                        [value]: { status: 'error' },
+                    })),
+            );
+        },
+        [],
+    );
+
+    const load = useCallback(
+        (value: string, loader: () => Promise<ReactNode>) => {
+            if (requested.current.has(value)) {
+                return;
+            }
+
+            requested.current.add(value);
+            start(value, loader);
+        },
+        [start],
+    );
+
+    // Retry deliberately skips the guard. It can only be reached from the
+    // error row, which the resulting `loading` state replaces, so a second
+    // fetch cannot overlap the first.
+    const retry = useCallback(
+        (value: string, loader: () => Promise<ReactNode>) => {
+            requested.current.add(value);
+            start(value, loader);
+        },
+        [start],
+    );
 
     const toggle = (value: string) => {
         setExpanded(
@@ -168,7 +270,20 @@ export function TreeView({
     const classes = ['w-full', className].filter(Boolean).join(' ');
 
     return (
-        <TreeContext.Provider value={{ expanded, toggle, selected, select }}>
+        <TreeContext.Provider
+            value={{
+                expanded,
+                toggle,
+                selected,
+                select,
+                branches,
+                load,
+                retry,
+                loadingLabel,
+                errorLabel,
+                retryLabel,
+            }}
+        >
             <ul
                 role="tree"
                 aria-label={label}
@@ -188,22 +303,125 @@ const rowStyles =
     'hover:bg-accent hover:text-accent-foreground ' +
     'focus-visible:ring-2 focus-visible:ring-ring';
 
+/**
+ * A failed branch reports in the group rather than on the row that failed, so
+ * the message has somewhere to sit and the retry has somewhere to be.
+ *
+ * It has to be a `treeitem`: `role="tree"` admits only `treeitem` and `group`
+ * as children, and anything else — a `status` or `alert` live region, which is
+ * the obvious reach — fails `aria-required-children`. Being a real row also
+ * means the arrow keys reach it, so the retry is not stranded behind Tab.
+ */
+function TreeErrorRow({
+    value,
+    label,
+    retryLabel,
+    onRetry,
+}: {
+    value: string;
+    label: string;
+    retryLabel: string;
+    onRetry: () => void;
+}) {
+    const depth = useContext(DepthContext);
+
+    return (
+        <li role="none">
+            <div
+                role="treeitem"
+                data-tree-row={`${value}/__error`}
+                aria-level={depth}
+                tabIndex={0}
+                // `destructive` is a fill colour; as text on a surface it is
+                // the emphasis pair that clears 4.5:1.
+                className={
+                    'flex w-full items-center gap-1.5 rounded-md py-1.5 pr-2 ' +
+                    'text-sm text-destructive-emphasis outline-none ' +
+                    'focus-visible:ring-2 focus-visible:ring-ring'
+                }
+                style={{ paddingLeft: indent(depth) }}
+            >
+                <IoAlertCircleOutline
+                    aria-hidden="true"
+                    className="size-3.5 shrink-0"
+                />
+                <span className="min-w-0 truncate">{label}</span>
+
+                <button
+                    type="button"
+                    className={
+                        'shrink-0 cursor-pointer rounded-sm px-1 underline ' +
+                        'underline-offset-2 outline-none hover:no-underline ' +
+                        'focus-visible:ring-2 focus-visible:ring-ring'
+                    }
+                    onClick={onRetry}
+                >
+                    {retryLabel}
+                </button>
+            </div>
+        </li>
+    );
+}
+
 export function TreeItem({
     value,
     label,
     icon,
     disabled = false,
     onSelect,
+    loadChildren,
     className,
     children,
     ...props
 }: TreeItemProps) {
-    const { expanded, toggle, selected, select } = useTree();
+    const {
+        expanded,
+        toggle,
+        selected,
+        select,
+        branches,
+        load,
+        retry,
+        loadingLabel,
+        errorLabel,
+        retryLabel,
+    } = useTree();
     const depth = useContext(DepthContext);
 
-    const isBranch = Boolean(children);
+    const hasStaticChildren = Children.count(children) > 0;
+    const loader = hasStaticChildren ? undefined : loadChildren;
+
     const isOpen = expanded.includes(value);
+    const branch = branches[value];
+    const isLoading = branch?.status === 'loading';
+    const isError = branch?.status === 'error';
+
+    const loadedNodes = branch?.status === 'loaded' ? branch.nodes : null;
+    const content = hasStaticChildren ? children : loadedNodes;
+    const hasContent = Children.count(content) > 0;
+
+    /**
+     * A branch that turned out to be empty becomes a leaf: it drops the
+     * chevron and `aria-expanded`, which would otherwise promise something to
+     * open that never opens.
+     */
+    const isBranch =
+        hasStaticChildren ||
+        (Boolean(loader) && branch?.status !== 'loaded') ||
+        hasContent;
+
     const isSelected = selected === value;
+
+    /**
+     * Fetching from an effect rather than the click handler means a branch
+     * opened through `defaultExpanded`, or by a controlled parent, loads the
+     * same way one opened by hand does.
+     */
+    useEffect(() => {
+        if (isOpen && loader) {
+            load(value, loader);
+        }
+    }, [isOpen, load, loader, value]);
 
     const classes = [
         rowStyles,
@@ -224,12 +442,11 @@ export function TreeItem({
                 aria-level={depth}
                 aria-selected={isSelected}
                 aria-expanded={isBranch ? isOpen : undefined}
+                aria-busy={isLoading || undefined}
                 aria-disabled={disabled || undefined}
                 tabIndex={disabled ? -1 : 0}
                 className={classes}
-                // Indent by depth rather than nesting padding, so the whole
-                // row stays clickable across the full width.
-                style={{ paddingLeft: `${(depth - 1) * 16 + 4}px` }}
+                style={{ paddingLeft: indent(depth) }}
                 onClick={() => {
                     if (disabled) {
                         return;
@@ -243,7 +460,20 @@ export function TreeItem({
                     }
                 }}
             >
-                {isBranch ? (
+                {/*
+                 * Progress replaces the chevron rather than adding a row of
+                 * its own: a `status` live region is not a legal child of a
+                 * tree, and the twisty is where the eye already is. The
+                 * spinner is decorative — `aria-busy` above is what carries
+                 * the state to assistive technology.
+                 */}
+                {isLoading ? (
+                    <Spinner
+                        size="xs"
+                        label={null}
+                        className="text-muted-foreground"
+                    />
+                ) : isBranch ? (
                     <IoChevronForward
                         aria-hidden="true"
                         className={[
@@ -267,11 +497,31 @@ export function TreeItem({
                 ) : null}
 
                 <span className="min-w-0 truncate">{label}</span>
+
+                {/* `aria-busy` says *that* the row is working; this says what. */}
+                {isLoading ? (
+                    <span className="sr-only">{loadingLabel}</span>
+                ) : null}
             </div>
 
-            {isBranch && isOpen ? (
+            {/*
+             * An empty `group` is legal but pointless, and it makes a branch
+             * that is still fetching look like one that opened onto nothing.
+             */}
+            {isBranch && isOpen && (hasContent || isError) ? (
                 <DepthContext.Provider value={depth + 1}>
-                    <ul role="group">{children}</ul>
+                    <ul role="group">
+                        {content}
+
+                        {isError && loader ? (
+                            <TreeErrorRow
+                                value={value}
+                                label={errorLabel}
+                                retryLabel={retryLabel}
+                                onRetry={() => retry(value, loader)}
+                            />
+                        ) : null}
+                    </ul>
                 </DepthContext.Provider>
             ) : null}
         </li>
