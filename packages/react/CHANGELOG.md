@@ -1,5 +1,18 @@
 # @aether-zone/kosmos
 
+## 0.3.1
+
+### Patch Changes
+
+- ee1ed1d: Close a `Dialog` when its backdrop is clicked. The element that centres the
+  panel covered the backdrop, so the click never reached it. A press that starts
+  inside the panel and ends outside it — selecting text in a field — still leaves
+  the dialog open.
+- 6a2adbc: Keep a `Dialog` or `AlertDialog` taller than the viewport reachable. It was centred with
+  `items-center`, which pushed an overflowing panel past both edges of the screen
+  with no way to scroll back to its title or footer. The panel now centres with an
+  auto margin and the overlay scrolls.
+
 ## 0.3.0
 
 ### Minor Changes
