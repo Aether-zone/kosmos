@@ -180,3 +180,61 @@ export const TrapsFocusAndLocksScroll: Story = {
         await expect(trigger).toHaveFocus();
     },
 };
+
+/**
+ * A dialog taller than the viewport was centred by `items-center`, which pushed
+ * it past the top edge as well as the bottom — its title was off screen with
+ * no way to scroll back to it. The top must stay on screen and the rest must
+ * scroll into reach.
+ */
+export const TallContentStaysReachable: Story = {
+    render: () => (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button>Open a long dialog</Button>
+            </DialogTrigger>
+
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Terms of service</DialogTitle>
+                    <DialogDescription>
+                        Longer than any screen this renders on.
+                    </DialogDescription>
+                </DialogHeader>
+
+                <div style={{ height: '3000px' }} />
+
+                <DialogFooter>
+                    <Button>Accept</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    ),
+    play: async ({ canvasElement }) => {
+        await userEvent.click(within(canvasElement).getByRole('button'));
+
+        const dialog = await within(document.body).findByRole('dialog');
+        const title = within(dialog).getByRole('heading', {
+            name: 'Terms of service',
+        });
+        const accept = within(dialog).getByRole('button', { name: 'Accept' });
+
+        // Opening focuses Accept, the only control, which scrolls the overlay
+        // to it. Let that settle before scrolling by hand, or it undoes ours.
+        await waitFor(() => expect(accept).toHaveFocus());
+
+        dialog.scrollTop = 0;
+
+        await waitFor(() =>
+            expect(title.getBoundingClientRect().top).toBeGreaterThanOrEqual(0),
+        );
+
+        dialog.scrollTop = dialog.scrollHeight;
+
+        await waitFor(() =>
+            expect(accept.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+                window.innerHeight,
+            ),
+        );
+    },
+};

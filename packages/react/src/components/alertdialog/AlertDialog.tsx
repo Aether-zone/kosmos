@@ -77,9 +77,10 @@ export function AlertDialog({
             closeOnBackdrop={false}
             aria-labelledby={titleId}
             aria-describedby={description ? descriptionId : undefined}
-            className="fixed inset-0 flex items-center justify-center p-4"
+            className="fixed inset-0 flex justify-center overflow-y-auto p-4"
         >
-            <div className="w-full max-w-md rounded-lg border border-border bg-surface p-6 shadow-lg">
+            {/* `my-auto`, not `items-center`: see DialogContent. */}
+            <div className="my-auto w-full max-w-md rounded-lg border border-border bg-surface p-6 shadow-lg">
                 <h2
                     id={titleId}
                     className="text-lg font-semibold leading-none tracking-tight text-foreground"

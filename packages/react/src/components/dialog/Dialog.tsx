@@ -118,8 +118,15 @@ export function DialogContent({
 }: DialogContentProps) {
     const { open, setOpen, titleId } = useDialog();
 
+    /*
+     * Centred by `my-auto` on the panel, not `items-center` here. A flex
+     * container centres an overflowing child by pushing it past *both* edges,
+     * where no scrolling can reach the top — so a dialog taller than the
+     * viewport lost its title and its footer. An auto margin collapses to
+     * zero instead, and `overflow-y-auto` lets the overlay scroll the rest.
+     */
     const classes = [
-        'fixed inset-0 flex items-center justify-center p-4',
+        'fixed inset-0 flex justify-center overflow-y-auto p-4',
         className,
     ]
         .filter(Boolean)
@@ -134,7 +141,7 @@ export function DialogContent({
             className={classes}
             {...props}
         >
-            <div className="w-full max-w-lg rounded-lg border border-border bg-surface p-6 shadow-lg">
+            <div className="my-auto w-full max-w-lg rounded-lg border border-border bg-surface p-6 shadow-lg">
                 {children}
             </div>
         </ModalOverlay>
