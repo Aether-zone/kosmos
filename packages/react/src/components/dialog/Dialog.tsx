@@ -2,9 +2,11 @@ import {
     createContext,
     type HTMLAttributes,
     type MouseEvent,
+    type PointerEvent,
     type ReactNode,
     useContext,
     useId,
+    useRef,
 } from 'react';
 
 import { useControllableState } from '../../hooks';
@@ -114,9 +116,44 @@ export function DialogTrigger({
 export function DialogContent({
     className,
     children,
+    onPointerDown,
+    onClick,
     ...props
 }: DialogContentProps) {
     const { open, setOpen, titleId } = useDialog();
+
+    /*
+     * The element that centres the panel covers the whole screen, so it — not
+     * ModalOverlay's backdrop beneath it — receives every click outside the
+     * panel, and `closeOnBackdrop` never fired. It closes here instead, but
+     * only for a press that both starts and ends on it: a drag out of a field
+     * inside the panel also ends in a click on this element, and must not
+     * throw away what was typed. Its own scrollbar is excluded for the same
+     * reason. This cannot move into ModalOverlay — for Drawer that element is
+     * the surface itself, and a click on its padding would close it.
+     */
+    const pressedOutside = useRef(false);
+
+    const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+        onPointerDown?.(event);
+
+        const overlay = event.currentTarget;
+        const onScrollbar =
+            event.clientX >=
+            overlay.getBoundingClientRect().left + overlay.clientWidth;
+
+        pressedOutside.current = event.target === overlay && !onScrollbar;
+    };
+
+    const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+        onClick?.(event);
+
+        if (pressedOutside.current && event.target === event.currentTarget) {
+            setOpen(false);
+        }
+
+        pressedOutside.current = false;
+    };
 
     /*
      * Centred by `my-auto` on the panel, not `items-center` here. A flex
@@ -139,6 +176,8 @@ export function DialogContent({
             // `aria-modal` without a name leaves the dialog unannounced.
             aria-labelledby={titleId}
             className={classes}
+            onPointerDown={handlePointerDown}
+            onClick={handleClick}
             {...props}
         >
             <div className="my-auto w-full max-w-lg rounded-lg border border-border bg-surface p-6 shadow-lg">

@@ -238,3 +238,55 @@ export const TallContentStaysReachable: Story = {
         );
     },
 };
+
+/**
+ * `closeOnBackdrop` is on for Dialog, but the element that centres the panel
+ * covers the whole screen — so it, not the backdrop beneath, received every
+ * click outside the panel and the dialog never closed.
+ */
+export const ClosesOnBackdropClick: Story = {
+    render: Default.render,
+    play: async ({ canvasElement }) => {
+        await userEvent.click(within(canvasElement).getByRole('button'));
+
+        const dialog = await within(document.body).findByRole('dialog');
+        const title = within(dialog).getByRole('heading');
+
+        // Inside the panel does nothing.
+        await userEvent.click(title);
+        await expect(document.body.querySelector('[role="dialog"]')).not.toBeNull();
+
+        // Outside it closes. A corner of the screen is never under the panel.
+        const outside = document.elementFromPoint(2, 2);
+
+        await expect(outside).not.toBeNull();
+        await userEvent.click(outside as Element);
+
+        await waitFor(() =>
+            expect(document.body.querySelector('[role="dialog"]')).toBeNull(),
+        );
+    },
+};
+
+/**
+ * A drag that starts inside the panel and ends outside it — selecting text in
+ * a field, say — is not a click on the backdrop and must not close it.
+ */
+export const DragOutOfPanelStaysOpen: Story = {
+    render: Form.render,
+    play: async ({ canvasElement }) => {
+        await userEvent.click(within(canvasElement).getByRole('button'));
+
+        const dialog = await within(document.body).findByRole('dialog');
+        const input = within(dialog).getByLabelText('Name');
+        const outside = document.elementFromPoint(2, 2) as Element;
+
+        await userEvent.pointer([
+            { keys: '[MouseLeft>]', target: input },
+            { target: outside },
+            { keys: '[/MouseLeft]', target: outside },
+        ]);
+
+        await expect(document.body.querySelector('[role="dialog"]')).not.toBeNull();
+    },
+};
